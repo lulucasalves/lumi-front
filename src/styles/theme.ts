@@ -5,6 +5,7 @@ export const theme = {
     secondary: "#00FF89",
     white: "#FFF",
     black: "#000",
+    black10: "rgba(0,0,0,0.1)",
     white12: "rgba(255, 255, 255, 0.12)",
     green: "#3FC500",
     blue: "#0067C5",

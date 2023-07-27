@@ -1,4 +1,8 @@
-import { DashboardGraphic, DashboardHeader } from "~/components";
+import {
+  DashboardGraphic,
+  DashboardHeader,
+  DashboardStatistic,
+} from "~/components";
 import { Container, Content } from "./style";
 
 export function Dashboard() {
@@ -7,6 +11,7 @@ export function Dashboard() {
       <DashboardHeader />
       <Content>
         <DashboardGraphic />
+        <DashboardStatistic />
       </Content>
     </Container>
   );

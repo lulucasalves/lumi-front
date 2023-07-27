@@ -39,7 +39,7 @@ export function DashboardHeader() {
         </HeaderFirst>
         <HeaderSecond>
           <Title>
-            <h2>Olá Bronyer</h2>
+            <h2>Bem vindo(a)</h2>
             <p>Analise suas despesas de uma forma eficiente</p>
           </Title>
           <LastChecked>
