@@ -1,4 +1,10 @@
-import { valueToNameMap } from "~/features";
+import {
+  valueToNameMap,
+  mock,
+  Mock,
+  generatePercentage,
+  formatHint,
+} from "~/features";
 import { RiArrowDownSFill } from "react-icons/ri";
 import {
   Button,
@@ -30,23 +36,11 @@ import { theme } from "~/styles";
 export function DashboardStatistic() {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [dropdown, setDropdown] = useState("Quantidade");
+  const [lines, setLines] = useState(["total"]);
   const handleDropdownToggle = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-  const [data, setData] = useState([
-    { x: 0, y: 333 },
-    { x: 1, y: 1022 },
-    { x: 2, y: 856 },
-    { x: 3, y: 1211 },
-    { x: 4, y: 343 },
-    { x: 5, y: 556 },
-    { x: 6, y: 1577 },
-    { x: 7, y: 1245 },
-    { x: 8, y: 344 },
-    { x: 9, y: 500 },
-    { x: 10, y: 1534 },
-    { x: 11, y: 800 },
-  ]);
+  const [data, setData] = useState<Mock>(mock);
   const [hint, setHint] = useState(-1);
   const [historic, setHistoric] = useState([
     { month: "Janeiro", value: 0, payed: false },
@@ -73,7 +67,7 @@ export function DashboardStatistic() {
     return `R$ ${tickValue.toFixed(2)}`;
   };
 
-  function findNearestPosition(val) {
+  function findNearestPosition(val: { clientX: number }) {
     const mouseX = val.clientX - 150;
     const dataList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -95,11 +89,13 @@ export function DashboardStatistic() {
     setHint(nearestValue);
   }
 
-  function formatHint(val: { x: number; y: number }) {
-    return [
-      { title: "Mês", value: valueToNameMap[val.x] },
-      { title: "Fatura", value: customTickFormatYAxis(val.y) },
-    ];
+  function changeLines(name: string) {
+    if (!lines.includes(name)) {
+      setLines((old) => [...old, name]);
+    } else {
+      const newLines = lines.filter((val) => val !== name);
+      setLines(newLines);
+    }
   }
 
   function selectItems() {
@@ -107,21 +103,71 @@ export function DashboardStatistic() {
       case "Quantidade":
         return (
           <Options>
-            <OptionItem>Total</OptionItem>
-            <OptionItem color={theme.colors.red}>Energia Elétrica</OptionItem>
-            <OptionItem color={theme.colors.pink}>Energia Injetada</OptionItem>
-            <OptionItem color={theme.colors.ciano}>ICMS</OptionItem>
+            <OptionItem
+              onClick={() => changeLines("total")}
+              active={lines.includes("total")}
+            >
+              Total
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("energiaEletrica")}
+              active={lines.includes("energiaEletrica")}
+              color={theme.colors.red}
+            >
+              Energia Elétrica
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("energiaInjetada")}
+              active={lines.includes("energiaInjetada")}
+              color={theme.colors.pink}
+            >
+              Energia Injetada
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("icms")}
+              active={lines.includes("icms")}
+              color={theme.colors.ciano}
+            >
+              ICMS
+            </OptionItem>
           </Options>
         );
 
       case "Valor":
         return (
           <Options>
-            <OptionItem>Total</OptionItem>
-            <OptionItem color={theme.colors.red}>Energia Elétrica</OptionItem>
-            <OptionItem color={theme.colors.pink}>Energia Injetada</OptionItem>
-            <OptionItem color={theme.colors.green}>ICMS-ST</OptionItem>
-            <OptionItem color={theme.colors.grey}>
+            <OptionItem
+              onClick={() => changeLines("total")}
+              active={lines.includes("total")}
+            >
+              Total
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("energiaEletrica")}
+              active={lines.includes("energiaEletrica")}
+              color={theme.colors.red}
+            >
+              Energia Elétrica
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("energiaInjetada")}
+              active={lines.includes("energiaInjetada")}
+              color={theme.colors.pink}
+            >
+              Energia Injetada
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("icmsSt")}
+              active={lines.includes("icmsSt")}
+              color={theme.colors.green}
+            >
+              ICMS-ST
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("contribuicaoPublica")}
+              active={lines.includes("contribuicaoPublica")}
+              color={theme.colors.grey}
+            >
               Contribuição Pública
             </OptionItem>
           </Options>
@@ -130,9 +176,27 @@ export function DashboardStatistic() {
       default:
         return (
           <Options>
-            <OptionItem color={theme.colors.red}>Energia Elétrica</OptionItem>
-            <OptionItem color={theme.colors.pink}>Energia Injetada</OptionItem>
-            <OptionItem color={theme.colors.ciano}>ICMS</OptionItem>
+            <OptionItem
+              onClick={() => changeLines("energiaEletrica")}
+              active={lines.includes("energiaEletrica")}
+              color={theme.colors.red}
+            >
+              Energia Elétrica
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("energiaInjetada")}
+              active={lines.includes("energiaInjetada")}
+              color={theme.colors.pink}
+            >
+              Energia Injetada
+            </OptionItem>
+            <OptionItem
+              onClick={() => changeLines("icms")}
+              active={lines.includes("icms")}
+              color={theme.colors.ciano}
+            >
+              ICMS
+            </OptionItem>
           </Options>
         );
     }
@@ -178,13 +242,22 @@ export function DashboardStatistic() {
             height={450}
             width={900}
           >
-            {hint > -1 ? (
+            {hint > -1 && lines.length ? (
               <Hint
-                format={formatHint}
-                align="center"
+                format={(val) => formatHint(val, dropdown)}
                 value={{
+                  totalValues: lines.map((value) => {
+                    return {
+                      value,
+                      x: hint,
+                      y: data[value][dropdown].filter(
+                        (val) => val.x === hint
+                      )[0].y,
+                    };
+                  }),
                   x: hint,
-                  y: data.filter((val) => val.x === hint)[0].y,
+                  y: data[lines[0]][dropdown].filter((val) => val.x === hint)[0]
+                    .y,
                 }}
               />
             ) : null}
@@ -206,14 +279,62 @@ export function DashboardStatistic() {
                 textAnchor: "end",
               }}
             />
-            <LineSeries data={data} color={theme.colors.blue} />
+            {lines.includes("total") ? (
+              <LineSeries
+                data={data.total[dropdown] ? data.total[dropdown] : []}
+                color={theme.colors.blue}
+              />
+            ) : (
+              <LineSeries data={[{ x: 1, y: 1 }]} color="transparent" />
+            )}
+            {lines.includes("energiaEletrica") ? (
+              <LineSeries
+                data={
+                  data.energiaEletrica[dropdown]
+                    ? data.energiaEletrica[dropdown]
+                    : [null]
+                }
+                color={theme.colors.red}
+              />
+            ) : null}
+            {lines.includes("energiaInjetada") ? (
+              <LineSeries
+                data={
+                  data.energiaInjetada[dropdown]
+                    ? data.energiaInjetada[dropdown]
+                    : []
+                }
+                color={theme.colors.pink}
+              />
+            ) : null}
+            {lines.includes("icms") ? (
+              <LineSeries
+                data={data.icms[dropdown] ? data.icms[dropdown] : []}
+                color={theme.colors.ciano}
+              />
+            ) : null}
+            {lines.includes("icmsSt") ? (
+              <LineSeries
+                data={data.icmsSt[dropdown] ? data.icmsSt[dropdown] : []}
+                color={theme.colors.green}
+              />
+            ) : null}
+            {lines.includes("contribuicaoPublica") ? (
+              <LineSeries
+                data={
+                  data.contribuicaoPublica[dropdown]
+                    ? data.contribuicaoPublica[dropdown]
+                    : []
+                }
+                color={theme.colors.grey}
+              />
+            ) : null}
             {hint > -1 ? (
               <VerticalGridLines
                 tickValues={[hint]}
                 style={{ stroke: "#000" }}
               />
             ) : null}
-
             <XAxis
               style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
               tickFormat={customTickFormatXAxis}
@@ -229,24 +350,56 @@ export function DashboardStatistic() {
         </Graphic>
         <Line />
         <List>
-          <h3>Valores comparados ao último mês</h3>
+          <h3>Valores comparados á ultima fatura</h3>
           <div>
             <p>Energia Elétrica</p>
-            <p>Aumentou a quantidade em 18%</p>
-            <p>Aumentou o preço unitário em 21%</p>
-            <p>Aumentou a tarifa unitária em 7%</p>
+            <p>
+              {generatePercentage(data, "energiaEletrica", "Quantidade", "A")}
+            </p>
+            <p>
+              {generatePercentage(
+                data,
+                "energiaEletrica",
+                "Preço Unitário",
+                "O"
+              )}
+            </p>
+            <p>
+              {generatePercentage(
+                data,
+                "energiaEletrica",
+                "Tarifa Unitária",
+                "A"
+              )}
+            </p>
           </div>
           <div>
             <p>Energia Injetada</p>
-            <p>Aumentou a quantidade em 18%</p>
-            <p>Aumentou o preço unitário em 21%</p>
-            <p>Aumentou a tarifa unitária em 7%</p>
+            <p>
+              {generatePercentage(data, "energiaInjetada", "Quantidade", "A")}
+            </p>
+            <p>
+              {generatePercentage(
+                data,
+                "energiaInjetada",
+                "Preço Unitário",
+                "O"
+              )}
+            </p>
+            <p>
+              {generatePercentage(
+                data,
+                "energiaInjetada",
+                "Tarifa Unitária",
+                "A"
+              )}
+            </p>
           </div>
           <div>
             <p>ICMS</p>
-            <p>Aumentou a quantidade em 18%</p>
-            <p>Aumentou o preço unitário em 21%</p>
-            <p>Aumentou a tarifa unitária em 7%</p>
+            <p>{generatePercentage(data, "icms", "Quantidade", "A")}</p>
+            <p>{generatePercentage(data, "icms", "Preço Unitário", "O")}</p>
+            <p>{generatePercentage(data, "icms", "Tarifa Unitária", "A")}</p>
           </div>
         </List>
       </Stastitics>

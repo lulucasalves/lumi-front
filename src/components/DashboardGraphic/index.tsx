@@ -1,5 +1,5 @@
 import { BsArrowRightCircle, BsCheckLg, BsX } from "react-icons/bs";
-import { valueToNameMap } from "~/features";
+import { translateMonths, valueToNameMap } from "~/features";
 import {
   Container,
   Line,
@@ -87,9 +87,8 @@ export function DashboardGraphic() {
   }
 
   function formatHint(val: { x: number; y: number }) {
-    console.log(val);
     return [
-      { title: "Mês", value: valueToNameMap[val.x] },
+      { title: "Mês", value: translateMonths[valueToNameMap[val.x]] },
       { title: "Fatura", value: customTickFormatYAxis(val.y) },
     ];
   }

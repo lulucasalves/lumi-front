@@ -15,7 +15,7 @@ import {
 import { BsDownload, BsGraphUp, BsListCheck } from "react-icons/bs";
 import Router from "next/router";
 
-export function DashboardHeader() {
+export function HistoricHeader() {
   return (
     <Container>
       <Header>
@@ -27,11 +27,11 @@ export function DashboardHeader() {
             alt="Lumini Logo"
           />
           <Menu>
-            <MenuItem active>
+            <MenuItem onClick={() => Router.replace("/")}>
               <BsGraphUp size={24} />
               <p>Dashboard</p>
             </MenuItem>
-            <MenuItem onClick={() => Router.replace("/historic")}>
+            <MenuItem active>
               <BsListCheck size={24} />
               <p>Histórico de faturas</p>
             </MenuItem>
@@ -41,7 +41,7 @@ export function DashboardHeader() {
         <HeaderSecond>
           <Title>
             <h2>Bem vindo(a)</h2>
-            <p>Analise suas despesas de uma forma eficiente</p>
+            <p>Veja seu histórico de faturas</p>
           </Title>
           <LastChecked>
             <LastCheckedText>

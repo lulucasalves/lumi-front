@@ -4,6 +4,7 @@ import { theme } from "~/styles";
 export const Container = styled.div`
   width: 100%;
   margin-top: 1rem;
+  margin-bottom: 12rem;
 `;
 
 export const Send = styled.div`
@@ -56,7 +57,7 @@ export const Options = styled.div`
   gap: 1rem;
 `;
 
-export const OptionItem = styled.div<{ color?: string }>`
+export const OptionItem = styled.div<{ color?: string; active?: boolean }>`
   font-size: 1.4rem;
   border: 0.3rem solid ${({ color }) => (color ? color : theme.colors.blue)};
   padding: 0.8rem 1.6rem;
@@ -65,6 +66,14 @@ export const OptionItem = styled.div<{ color?: string }>`
   color: ${({ color }) => (color ? color : theme.colors.blue)};
   cursor: pointer;
   transition: 0.3s;
+
+  ${({ active, color }) =>
+    active
+      ? `
+    color: ${theme.colors.white};
+    background: ${color ? color : theme.colors.blue};
+    `
+      : ""}
 
   &:hover {
     transition: 0.3s;
@@ -129,6 +138,7 @@ export const List = styled.div`
   }
 
   div {
+    min-width: 31rem;
     padding: 1.5rem;
     border-radius: 0.8rem;
     border: 0.3rem solid ${theme.colors.primary};
