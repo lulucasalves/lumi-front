@@ -25,7 +25,7 @@ const translateThemes = {
 };
 
 const customTickFormatYAxis = (tickValue: number, dropdown: string) => {
-  if (dropdown === "Quantidade") return `${tickValue} VHW`;
+  if (dropdown === "Quantidade") return `${tickValue} kWh`;
 
   return `R$ ${tickValue.toFixed(2)}`;
 };

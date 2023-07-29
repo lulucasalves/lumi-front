@@ -19,39 +19,29 @@ import {
   VerticalGridLines,
   Hint,
 } from "react-vis";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { theme } from "~/styles";
+import { ucData, ucList } from "~/client/boletos";
+import { transformHistoric } from "~/features/historic";
 
 export function DashboardGraphic() {
-  const [data, setData] = useState([
-    { x: 0, y: 333 },
-    { x: 1, y: 1022 },
-    { x: 2, y: 856 },
-    { x: 3, y: 1211 },
-    { x: 4, y: 343 },
-    { x: 5, y: 556 },
-    { x: 6, y: 1577 },
-    { x: 7, y: 1245 },
-    { x: 8, y: 344 },
-    { x: 9, y: 500 },
-    { x: 10, y: 1534 },
-    { x: 11, y: 800 },
-  ]);
+  const [data, setData] = useState([]);
+
   const [hint, setHint] = useState(-1);
-  const [historic, setHistoric] = useState([
-    { month: "Janeiro", value: 0, payed: false },
-    { month: "Fevereiro", value: 0, payed: false },
-    { month: "Março", value: 0, payed: false },
-    { month: "Abril", value: 0, payed: false },
-    { month: "Maio", value: 0, payed: false },
-    { month: "Junho", value: 0, payed: false },
-    { month: "Julho", value: 0, payed: false },
-    { month: "Agosto", value: 0, payed: false },
-    { month: "Setembro", value: 0, payed: false },
-    { month: "Outubro", value: 0, payed: false },
-    { month: "Novembro", value: 0, payed: false },
-    { month: "Dezembro", value: 0, payed: false },
-  ]);
+  const [historic, setHistoric] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      await ucData("7202788969").then((val) => {
+        setData(val.Total.Valor.sort((a, b) => a.x - b.x));
+      });
+
+      await ucList("7202788969").then((val) => {
+        console.log(val);
+        setHistoric(transformHistoric(val));
+      });
+    })();
+  }, []);
 
   const customTickFormatXAxis = (tickValue: number) => {
     return valueToNameMap[tickValue] || "";
@@ -81,7 +71,6 @@ export function DashboardGraphic() {
 
     // Obter o nome associado ao valor encontrado na lista usando o mapeamento valueToNameMap
     const nearestValue = dataList[nearestIndex];
-    const nearestName = valueToNameMap[nearestValue];
 
     setHint(nearestValue);
   }
@@ -157,7 +146,7 @@ export function DashboardGraphic() {
         <Line />
         <List>
           <h3>Últimas Faturas</h3>
-          <table>
+          <table cellSpacing={0}>
             <thead>
               <tr>
                 <th>Mês</th>

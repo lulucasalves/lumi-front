@@ -282,3 +282,47 @@ export const mock: Mock = {
     ],
   },
 };
+
+export interface MockList {
+  dataEmissao: string;
+  dataVencimento: string;
+  energiaEletrica: number;
+  icmsSt: number;
+  totalEnergia: number;
+  segundaVia: number;
+  total: number;
+  payed: boolean;
+}
+
+export const mockList = [
+  {
+    dataEmissao: "02/06/2018",
+    dataVencimento: "05/07/2018",
+    energiaEletrica: 320.92,
+    icmsSt: 27.23,
+    totalEnergia: 231.35,
+    segundaVia: 0,
+    total: 583.0,
+    payed: true,
+  },
+  {
+    dataEmissao: "02/06/2019",
+    dataVencimento: "05/07/2019",
+    energiaEletrica: 310.92,
+    icmsSt: 21.23,
+    totalEnergia: 271.35,
+    segundaVia: 4.23,
+    total: 853.0,
+    payed: false,
+  },
+  {
+    dataEmissao: "02/06/2019",
+    dataVencimento: "05/07/2019",
+    energiaEletrica: 310.92,
+    icmsSt: 21.23,
+    totalEnergia: 271.35,
+    segundaVia: 4.23,
+    total: 853.0,
+    payed: false,
+  },
+];
