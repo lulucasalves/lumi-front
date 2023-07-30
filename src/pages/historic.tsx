@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Dashboard, Historic } from "~/components";
+import { Historic } from "../components";
 
 export default function Home() {
   return (

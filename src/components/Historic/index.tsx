@@ -1,4 +1,4 @@
-import { HistoricHeader } from "~/components";
+import { HistoricHeader } from "../../components";
 import {
   Container,
   Content,
@@ -9,10 +9,15 @@ import {
 } from "./style";
 import { BsArrowRightCircle, BsDownload, BsTrash3 } from "react-icons/bs";
 import { useContext, useEffect, useState } from "react";
-import { addPdf, changeStateData, deletePdf, ucList } from "~/client/boletos";
-import { IContext, MyContext } from "~/context/Boleto";
+import {
+  addPdf,
+  changeStateData,
+  deletePdf,
+  ucList,
+} from "../../client/boletos";
+import { IContext, MyContext } from "../../context/Boleto";
 import { Loader } from "../Loader";
-import { toastrError, toastrSuccess } from "~/features/toastr";
+import { toastrError, toastrSuccess } from "../../features/toastr";
 
 export function Historic() {
   const [historic, setHistoric] = useState();
@@ -61,16 +66,18 @@ export function Historic() {
   }
 
   useEffect(() => {
-    const [, numberUc] = currentUc.split(" - ");
+    if (currentUc) {
+      const [, numberUc] = currentUc.split(" - ");
 
-    (async () => {
-      await ucList(numberUc)
-        .then((val) => {
-          if (val.message) toastrError(val.message);
-          else setHistoric(val);
-        })
-        .finally(() => setIsLoading(false));
-    })();
+      (async () => {
+        await ucList(numberUc)
+          .then((val) => {
+            if (val.message) toastrError(val.message);
+            else setHistoric(val);
+          })
+          .finally(() => setIsLoading(false));
+      })();
+    }
   }, [currentUc]);
 
   function handleUpload() {
@@ -111,7 +118,7 @@ export function Historic() {
     return new Date(year, month - 1, day);
   };
   return (
-    <Container>
+    <Container data-testid="historic-page">
       <HistoricHeader />
       {!isLoading ? (
         <Content>

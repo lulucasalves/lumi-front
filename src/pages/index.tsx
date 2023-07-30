@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Dashboard } from "~/components";
+import { Dashboard } from "../components";
 
 export default function Home() {
   return (

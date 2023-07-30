@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { theme } from "~/styles";
+import { theme } from "../../styles";
 
 export const Container = styled.div`
   width: 100%;
@@ -40,7 +40,7 @@ export const Menu = styled.menu`
   }
 `;
 
-export const MenuItem = styled.div<{ active?: boolean }>`
+export const MenuItem = styled.div<{ active?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;

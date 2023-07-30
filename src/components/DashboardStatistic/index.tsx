@@ -1,10 +1,9 @@
 import {
   valueToNameMap,
-  mock,
   Mock,
   generatePercentage,
   formatHint,
-} from "~/features";
+} from "../../features";
 import { RiArrowDownSFill } from "react-icons/ri";
 import {
   Button,
@@ -18,7 +17,7 @@ import {
   OptionItem,
   Options,
   Send,
-  Stastitics,
+  Statistics,
   Title,
 } from "./style";
 import {
@@ -32,10 +31,10 @@ import {
   Hint,
 } from "react-vis";
 import { useEffect, useState } from "react";
-import { theme } from "~/styles";
-import { ucData } from "~/client/boletos";
-import { toastrError } from "~/features/toastr";
-import { Loader } from "../Loader";
+import { theme } from "../../styles";
+import { ucData } from "../../client/boletos";
+import { toastrError } from "../../features/toastr";
+import { Loader } from "../index";
 
 export function DashboardStatistic() {
   const [isLoading, setIsLoading] = useState(true);
@@ -219,7 +218,7 @@ export function DashboardStatistic() {
   }
 
   return !isLoading ? (
-    <Container>
+    <Container data-testid="dashboard-statistics">
       <Send>
         <Title>Detalhes dos gastos</Title>
         <DropdownButtonContainer>
@@ -250,7 +249,7 @@ export function DashboardStatistic() {
         </DropdownButtonContainer>
       </Send>
       {data ? (
-        <Stastitics>
+        <Statistics>
           <Graphic>
             <XYPlot
               onMouseLeave={() => setHint(-1)}
@@ -432,11 +431,11 @@ export function DashboardStatistic() {
               <p>{generatePercentage(data, "icms", "Tarifa Unitária", "A")}</p>
             </div>
           </List>
-        </Stastitics>
+        </Statistics>
       ) : null}
     </Container>
   ) : (
-    <LoaderDiv>
+    <LoaderDiv data-testid="dashboard-statistics">
       <Loader size={100} />
     </LoaderDiv>
   );

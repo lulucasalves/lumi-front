@@ -15,11 +15,11 @@ import {
 import { BsDownload, BsGraphUp, BsListCheck } from "react-icons/bs";
 import Router from "next/router";
 import { useContext, useEffect, useState } from "react";
-import { IContext, MyContext } from "~/context/Boleto";
-import { ucList } from "~/client/boletos";
+import { IContext, MyContext } from "../../context/Boleto";
+import { ucList } from "../../client/boletos";
 import { Modal } from "../Modal";
 import { Loader } from "../Loader";
-import { toastrError } from "~/features/toastr";
+import { toastrError } from "../../features/toastr";
 
 export function HistoricHeader() {
   const { currentUc, ucs, setCurrentUc } = useContext<IContext>(MyContext);
@@ -41,25 +41,30 @@ export function HistoricHeader() {
   }
   useEffect(() => {
     (async () => {
-      const [, numberUc] = currentUc.split(" - ");
+      if (currentUc) {
+        const [, numberUc] = currentUc.split(" - ");
 
-      await ucList(numberUc).then((val) => {
-        if (val.message) toastrError(val.message);
-        else {
-          const value = ordenarPorDataEmissao(val)[0];
-          if (value)
-            setLast({ value: `R$ ${value.total.toFixed(2)}`, url: value.url });
-        }
-      });
+        await ucList(numberUc).then((val) => {
+          if (val.message) toastrError(val.message);
+          else {
+            const value = ordenarPorDataEmissao(val)[0];
+            if (value)
+              setLast({
+                value: `R$ ${value.total.toFixed(2)}`,
+                url: value.url,
+              });
+          }
+        });
+      }
     })();
   }, [currentUc]);
 
   return (
-    <Container>
+    <Container data-testid="historic-header">
       <Modal isOpen={modal} onClose={() => setModal(false)}>
         <h2>Selecione a UC desejada</h2>
         <div>
-          {ucs.length
+          {ucs
             ? ucs.map((val, i) => {
                 return (
                   <div
@@ -89,7 +94,7 @@ export function HistoricHeader() {
               <BsGraphUp size={24} />
               <p>Dashboard</p>
             </MenuItem>
-            <MenuItem active>
+            <MenuItem active="true">
               <BsListCheck size={24} />
               <p>Histórico de faturas</p>
             </MenuItem>

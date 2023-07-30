@@ -2,12 +2,12 @@ import {
   DashboardGraphic,
   DashboardHeader,
   DashboardStatistic,
-} from "~/components";
+} from "../../components";
 import { Container, Content } from "./style";
 
 export function Dashboard() {
   return (
-    <Container>
+    <Container data-testid="dashboard-page">
       <DashboardHeader />
       <Content>
         <DashboardGraphic />

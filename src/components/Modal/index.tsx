@@ -38,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   return (
     <>
       {isOpen && (
-        <ModalOverlay>
+        <ModalOverlay data-testid="modal">
           <ModalContent className="modal-content">
             <Close onClick={onClose}>
               <BsX size={24} />

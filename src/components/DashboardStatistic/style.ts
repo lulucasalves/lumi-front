@@ -1,5 +1,5 @@
 import { keyframes, styled } from "styled-components";
-import { theme } from "~/styles";
+import { theme } from "../../styles";
 
 export const Container = styled.div`
   width: 100%;
@@ -18,8 +18,8 @@ export const LoaderDiv = styled.div`
 export const Send = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin-bottom: 5rem;
+  gap: 3rem;
 
   @media (max-width: 470px) {
     flex-direction: column;
@@ -127,7 +127,7 @@ export const DropdownContentContainer = styled.div`
   }
 `;
 
-export const Stastitics = styled.div`
+export const Statistics = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;

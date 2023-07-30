@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { theme } from "~/styles";
+import { theme } from "../../styles";
 
 export const Container = styled.div`
   width: 100%;
@@ -70,7 +70,7 @@ export const SendButton = styled.div`
   }
 `;
 
-export const Stastitics = styled.div`
+export const Statistics = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;

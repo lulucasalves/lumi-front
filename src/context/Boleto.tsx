@@ -1,7 +1,7 @@
 // contexts/MyContext.js
 import React, { ReactNode, createContext, useEffect, useState } from "react";
-import { getUcs } from "~/client/boletos";
-import { toastrError } from "~/features/toastr";
+import { getUcs } from "../client/boletos";
+import { toastrError } from "../features/toastr";
 
 const MyContext = createContext({});
 

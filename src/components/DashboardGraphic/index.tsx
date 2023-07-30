@@ -1,5 +1,5 @@
 import { BsArrowRightCircle, BsCheckLg, BsX } from "react-icons/bs";
-import { translateMonths, valueToNameMap } from "~/features";
+import { translateMonths, valueToNameMap } from "../../features";
 import {
   Container,
   Line,
@@ -7,7 +7,7 @@ import {
   LoaderDiv,
   Send,
   SendButton,
-  Stastitics,
+  Statistics,
   Title,
 } from "./style";
 import {
@@ -21,11 +21,11 @@ import {
   Hint,
 } from "react-vis";
 import { useEffect, useState } from "react";
-import { theme } from "~/styles";
-import { addPdf, ucData, ucList } from "~/client/boletos";
-import { transformHistoric } from "~/features/historic";
+import { theme } from "../../styles";
+import { addPdf, ucData, ucList } from "../../client/boletos";
+import { transformHistoric } from "../../features/historic";
 import { Loader } from "../Loader";
-import { toastrError, toastrSuccess } from "~/features/toastr";
+import { toastrError, toastrSuccess } from "../../features/toastr";
 
 export function DashboardGraphic() {
   const [data, setData] = useState([]);
@@ -129,7 +129,7 @@ export function DashboardGraphic() {
   }
 
   return !isLoadingGraph && !isLoadingList ? (
-    <Container>
+    <Container data-testid="dashboard-graphic">
       <Send>
         <Title>Suas faturas</Title>
         <SendButton onClick={handleUpload}>
@@ -144,7 +144,7 @@ export function DashboardGraphic() {
         accept="application/pdf"
         onChange={handleFileChange}
       />
-      <Stastitics>
+      <Statistics>
         <XYPlot
           onMouseLeave={() => setHint(-1)}
           onMouseMove={findNearestPosition}
@@ -237,10 +237,10 @@ export function DashboardGraphic() {
             </tbody>
           </table>
         </List>
-      </Stastitics>
+      </Statistics>
     </Container>
   ) : (
-    <LoaderDiv>
+    <LoaderDiv data-testid="dashboard-graphic">
       <Loader size={100} />
     </LoaderDiv>
   );
