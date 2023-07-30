@@ -72,7 +72,7 @@ export const Options = styled.div`
   justify-content: center;
 `;
 
-export const OptionItem = styled.div<{ color?: string; active?: boolean }>`
+export const OptionItem = styled.div<{ color?: string; active?: string }>`
   font-size: 1.4rem;
   border: 0.3rem solid ${({ color }) => (color ? color : theme.colors.blue)};
   padding: 0.8rem 1.6rem;

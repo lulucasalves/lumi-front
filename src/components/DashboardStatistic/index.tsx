@@ -121,27 +121,27 @@ export function DashboardStatistic() {
           <Options>
             <OptionItem
               onClick={() => changeLines("total")}
-              active={lines.includes("total")}
+              active={lines.includes("total") ? "true" : ""}
             >
               Total
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("energiaEletrica")}
-              active={lines.includes("energiaEletrica")}
+              active={lines.includes("energiaEletrica") ? "true" : ""}
               color={theme.colors.red}
             >
               Energia Elétrica
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("energiaInjetada")}
-              active={lines.includes("energiaInjetada")}
+              active={lines.includes("energiaInjetada") ? "true" : ""}
               color={theme.colors.pink}
             >
               Energia Injetada
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("icms")}
-              active={lines.includes("icms")}
+              active={lines.includes("icms") ? "true" : ""}
               color={theme.colors.ciano}
             >
               ICMS
@@ -154,27 +154,27 @@ export function DashboardStatistic() {
           <Options>
             <OptionItem
               onClick={() => changeLines("total")}
-              active={lines.includes("total")}
+              active={lines.includes("total") ? "true" : ""}
             >
               Total
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("energiaEletrica")}
-              active={lines.includes("energiaEletrica")}
+              active={lines.includes("energiaEletrica") ? "true" : ""}
               color={theme.colors.red}
             >
               Energia Elétrica
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("icmsSt")}
-              active={lines.includes("icmsSt")}
+              active={lines.includes("icmsSt") ? "true" : ""}
               color={theme.colors.green}
             >
               ICMS-ST
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("contribuicaoPublica")}
-              active={lines.includes("contribuicaoPublica")}
+              active={lines.includes("contribuicaoPublica") ? "true" : ""}
               color={theme.colors.grey}
             >
               Contribuição Pública
@@ -187,27 +187,27 @@ export function DashboardStatistic() {
           <Options>
             <OptionItem
               onClick={() => changeLines("total")}
-              active={lines.includes("total")}
+              active={lines.includes("total") ? "true" : ""}
             >
               Total
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("energiaEletrica")}
-              active={lines.includes("energiaEletrica")}
+              active={lines.includes("energiaEletrica") ? "true" : ""}
               color={theme.colors.red}
             >
               Energia Elétrica
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("energiaInjetada")}
-              active={lines.includes("energiaInjetada")}
+              active={lines.includes("energiaInjetada") ? "true" : ""}
               color={theme.colors.pink}
             >
               Energia Injetada
             </OptionItem>
             <OptionItem
               onClick={() => changeLines("icms")}
-              active={lines.includes("icms")}
+              active={lines.includes("icms") ? "true" : ""}
               color={theme.colors.ciano}
             >
               ICMS
@@ -229,10 +229,11 @@ export function DashboardStatistic() {
           {isDropdownOpen && (
             <DropdownContentContainer>
               {["Quantidade", "Preço Unitário", "Tarifa Unitária", "Valor"].map(
-                (val) => {
+                (val, i) => {
                   return (
                     val !== dropdown && (
                       <div
+                        key={i}
                         onClick={() => {
                           setDropdown(val);
                           setDropdownOpen(false);

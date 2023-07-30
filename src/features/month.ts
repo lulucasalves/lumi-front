@@ -11,4 +11,4 @@ export const valueToNameMap = {
   9: "OUT",
   10: "NOV",
   11: "DEZ",
-} as any;
+} as unknown;
