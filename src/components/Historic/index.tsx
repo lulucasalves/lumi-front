@@ -86,14 +86,20 @@ export function Historic() {
       const formData = new FormData();
       formData.append("files", file);
       setIsSending(true);
-
+      setIsLoading(true);
       (async () => {
         await addPdf(formData)
           .then((val) => {
             if (val.message) toastrError(val.message);
-            else toastrSuccess("Boleto enviado com sucesso!");
+            else {
+              toastrSuccess("Boleto enviado com sucesso!");
+              setHistoric(val);
+            }
           })
-          .finally(() => setIsSending(false));
+          .finally(() => {
+            setIsLoading(false);
+            setIsSending(false);
+          });
       })();
 
       event.target.value = null;
