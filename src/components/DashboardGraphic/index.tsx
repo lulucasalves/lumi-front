@@ -64,14 +64,6 @@ export function DashboardGraphic() {
   function findNearestPosition(val) {
     const mouseX = val.clientX - 100;
 
-    // innerWidth > 1450
-    // ? 900
-    // : innerWidth > 1170
-    // ? 600
-    // : innerWidth > 830
-    // ? 300
-    // : innerWidth - 100
-
     const dataList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     // Encontrar o valor atual do mouse na escala de 0 a 800
@@ -165,7 +157,7 @@ export function DashboardGraphic() {
               ? 600
               : innerWidth > 830
               ? 300
-              : innerWidth - 100
+              : innerWidth - 25
           }
         >
           {hint > -1 ? (

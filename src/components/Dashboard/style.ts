@@ -8,4 +8,8 @@ export const Container = styled.section`
 export const Content = styled.div`
   color: ${theme.colors.primary};
   padding: 4rem;
+
+  @media (max-width: 830px) {
+    padding: 4rem 2rem;
+  }
 `;

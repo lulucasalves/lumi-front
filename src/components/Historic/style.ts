@@ -19,6 +19,10 @@ export const Content = styled.div`
   margin-top: 1rem;
   margin-bottom: 12rem;
 
+  @media (max-width: 830px) {
+    padding: 4rem 2rem;
+  }
+
   * {
     &::-webkit-scrollbar {
       display: none;

@@ -110,13 +110,13 @@ export const List = styled.div`
 
     th {
       font-weight: 500;
-      padding: 0.5rem 4rem;
+      padding: 0.5rem 2rem;
     }
 
     tbody {
       tr {
         td {
-          padding: 0.5rem 4rem;
+          padding: 0.5rem 2rem;
           border-bottom: 1px solid ${theme.colors.black10};
 
           div {

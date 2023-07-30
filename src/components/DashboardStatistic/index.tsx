@@ -264,7 +264,7 @@ export function DashboardStatistic() {
                   ? 600
                   : innerWidth > 830
                   ? 300
-                  : innerWidth - 100
+                  : innerWidth - 25
               }
             >
               {hint > -1 && lines.length > 0 ? (

@@ -166,7 +166,8 @@ export const List = styled.div`
     min-width: 31rem;
     padding: 1.5rem;
     border-radius: 0.8rem;
-    border: 0.3rem solid ${theme.colors.primary};
+    border: 0.2rem solid ${theme.colors.primary};
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     justify-content: center;

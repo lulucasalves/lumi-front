@@ -14,3 +14,7 @@ Para iniciar o projeto localmente basta digitar o comando `yarn && yarn dev` ou 
 ### Deploy
 
 A prefêrencia do deploy era para ser no AWS ECS porém sem recursos financeiros não foi possível fazer isso, então para apresentação eu subi a aplicação na Vercel
+
+## Atenção!
+
+No primeiro acesso pode demorar até 1 minuto para carregar as requisições, isso ocorre pelo fato da api estar hospedada em um servidor gratuito com pouca memória de processamento.

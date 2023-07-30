@@ -110,7 +110,11 @@ export function HistoricHeader() {
             ) : (
               <Loader size={77} />
             )}
-            <LastCheckedButton onClick={() => window.open(last.url, "_blank")}>
+            <LastCheckedButton
+              onClick={() => {
+                if (last.url) window.open(last.url, "_blank");
+              }}
+            >
               <BsDownload size={20} />
               <p>Baixar</p>
             </LastCheckedButton>
