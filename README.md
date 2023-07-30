@@ -13,4 +13,4 @@ Para iniciar o projeto localmente basta digitar o comando `yarn && yarn dev` ou 
 
 ### Deploy
 
-EM DESENVOLVIMENTO...
+A prefêrencia do deploy era para ser no AWS ECS porém sem recursos financeiros não foi possível fazer isso, então para apresentação eu subi a aplicação na Vercel
