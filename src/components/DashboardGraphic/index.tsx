@@ -4,6 +4,7 @@ import {
   Container,
   Line,
   List,
+  LoaderDiv,
   Send,
   SendButton,
   Stastitics,
@@ -23,22 +24,33 @@ import { useEffect, useState } from "react";
 import { theme } from "~/styles";
 import { addPdf, ucData, ucList } from "~/client/boletos";
 import { transformHistoric } from "~/features/historic";
+import { Loader } from "../Loader";
+import { toastrError, toastrSuccess } from "~/features/toastr";
 
 export function DashboardGraphic() {
   const [data, setData] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [isLoadingGraph, setIsLoadingGraph] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [isLoadingList, setIsLoadingList] = useState(true);
+
   const [hint, setHint] = useState(-1);
   const [historic, setHistoric] = useState([]);
 
   useEffect(() => {
     (async () => {
-      await ucData("7202788969").then((val) => {
-        setData(val.Total.Valor.sort((a, b) => a.x - b.x));
-      });
+      await ucData("7202788969")
+        .then((val) => {
+          if (val.message) toastrError(val.message);
+          else setData(val.Total.Valor.sort((a, b) => a.x - b.x));
+        })
+        .finally(() => setIsLoadingGraph(false));
 
-      await ucList("7202788969").then((val) => {
-        setHistoric(transformHistoric(val));
-      });
+      await ucList("7202788969")
+        .then((val) => {
+          if (val.message) toastrError(val.message);
+          else setHistoric(transformHistoric(val));
+        })
+        .finally(() => setIsLoadingList(false));
     })();
   }, []);
 
@@ -88,8 +100,14 @@ export function DashboardGraphic() {
       const formData = new FormData();
       formData.append("files", file);
 
+      setIsSending(true);
       (async () => {
-        await addPdf(formData).then((res) => console.log(res));
+        await addPdf(formData)
+          .then((val) => {
+            if (val.message) toastrError(val.message);
+            else toastrSuccess("Boleto enviado com sucesso!");
+          })
+          .finally(() => setIsSending(false));
       })();
 
       event.target.value = null;
@@ -97,16 +115,18 @@ export function DashboardGraphic() {
   };
 
   function handleUpload() {
-    document.getElementById("inputFile").click();
+    if (!isSending) {
+      document.getElementById("inputFile").click();
+    }
   }
 
-  return (
+  return !isLoadingGraph && !isLoadingList ? (
     <Container>
       <Send>
         <Title>Suas faturas</Title>
         <SendButton onClick={handleUpload}>
           <BsArrowRightCircle size={24} />
-          <p>Enviar boleto</p>
+          <p>{!isSending ? "Enviar boleto" : "Enviando..."}</p>
         </SendButton>
       </Send>
       <input
@@ -180,25 +200,32 @@ export function DashboardGraphic() {
               </tr>
             </thead>
             <tbody>
-              {historic &&
-                historic.map((val, i) => {
-                  return (
-                    <tr key={i}>
-                      <td>{val.month}</td>
-                      <td>{val.value ? `R$ ${val.value.toFixed(2)}` : "-"}</td>
-                      <td>
-                        <div>
-                          {val.payed ? <BsCheckLg /> : <BsX size={18} />}
-                          {val.payed ? "Pago" : "Não Pago"}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+              {historic
+                ? historic.map((val, i) => {
+                    return (
+                      <tr key={i}>
+                        <td>{val.month}</td>
+                        <td>
+                          {val.value ? `R$ ${val.value.toFixed(2)}` : "-"}
+                        </td>
+                        <td>
+                          <div>
+                            {val.payed ? <BsCheckLg /> : <BsX size={18} />}
+                            {val.payed ? "Pago" : "Não Pago"}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                : null}
             </tbody>
           </table>
         </List>
       </Stastitics>
     </Container>
+  ) : (
+    <LoaderDiv>
+      <Loader size={100} />
+    </LoaderDiv>
   );
 }

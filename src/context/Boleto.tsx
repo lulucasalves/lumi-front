@@ -1,6 +1,7 @@
 // contexts/MyContext.js
 import React, { ReactNode, createContext, useEffect, useState } from "react";
 import { getUcs } from "~/client/boletos";
+import { toastrError } from "~/features/toastr";
 
 const MyContext = createContext({});
 
@@ -18,10 +19,13 @@ const MyContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     (async () => {
       await getUcs().then((res) => {
-        setUcs(res);
+        if (res.message) toastrError(res.message);
+        else {
+          setUcs(res);
 
-        if (res.length) {
-          setCurrentUc(res[0]);
+          if (res.length) {
+            setCurrentUc(res[0]);
+          }
         }
       });
     })();

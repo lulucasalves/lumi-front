@@ -1,13 +1,23 @@
 import { styled } from "styled-components";
 import { theme } from "~/styles";
 
-export const Container = styled.section`
+export const Container = styled.div`
   width: 100%;
+`;
+
+export const LoaderDiv = styled.div`
+  width: 100%;
+  justify-content: center;
+  margin-top: 5rem;
+  display: flex;
+  margin-bottom: 7rem;
 `;
 
 export const Content = styled.div`
   color: ${theme.colors.primary};
   padding: 4rem;
+  margin-top: 1rem;
+  margin-bottom: 12rem;
 
   table {
     width: 100%;

@@ -14,6 +14,7 @@ import {
   Graphic,
   Line,
   List,
+  LoaderDiv,
   OptionItem,
   Options,
   Send,
@@ -33,8 +34,11 @@ import {
 import { useEffect, useState } from "react";
 import { theme } from "~/styles";
 import { ucData } from "~/client/boletos";
+import { toastrError } from "~/features/toastr";
+import { Loader } from "../Loader";
 
 export function DashboardStatistic() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [dropdown, setDropdown] = useState("Quantidade");
   const [lines, setLines] = useState(["total"]);
@@ -43,33 +47,23 @@ export function DashboardStatistic() {
   };
   const [data, setData] = useState<Mock>();
   const [hint, setHint] = useState(-1);
-  const [historic, setHistoric] = useState([
-    { month: "Janeiro", value: 0, payed: false },
-    { month: "Fevereiro", value: 0, payed: false },
-    { month: "Março", value: 0, payed: false },
-    { month: "Abril", value: 0, payed: false },
-    { month: "Maio", value: 0, payed: false },
-    { month: "Junho", value: 0, payed: false },
-    { month: "Julho", value: 0, payed: false },
-    { month: "Agosto", value: 0, payed: false },
-    { month: "Setembro", value: 0, payed: false },
-    { month: "Outubro", value: 0, payed: false },
-    { month: "Novembro", value: 0, payed: false },
-    { month: "Dezembro", value: 0, payed: false },
-  ]);
 
   useEffect(() => {
     (async () => {
-      await ucData("7202788969").then((val) => {
-        setData({
-          total: val.Total,
-          energiaEletrica: val["Energia Elétrica"],
-          energiaInjetada: val["Energia Injetada"],
-          icms: val["ICMS"],
-          icmsSt: val["ICMS-ST"],
-          contribuicaoPublica: val["Contribuição"],
-        });
-      });
+      await ucData("7202788969")
+        .then((val) => {
+          if (val.message) toastrError(val.message);
+          else
+            setData({
+              total: val.Total,
+              energiaEletrica: val["Energia Elétrica"],
+              energiaInjetada: val["Energia Injetada"],
+              icms: val["ICMS"],
+              icmsSt: val["ICMS-ST"],
+              contribuicaoPublica: val["Contribuição"],
+            });
+        })
+        .finally(() => setIsLoading(false));
     })();
   }, []);
 
@@ -217,7 +211,7 @@ export function DashboardStatistic() {
     }
   }
 
-  return (
+  return !isLoading ? (
     <Container>
       <Send>
         <Title>Detalhes dos gastos</Title>
@@ -426,5 +420,9 @@ export function DashboardStatistic() {
         </Stastitics>
       ) : null}
     </Container>
+  ) : (
+    <LoaderDiv>
+      <Loader size={100} />
+    </LoaderDiv>
   );
 }

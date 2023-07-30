@@ -7,6 +7,14 @@ export const Container = styled.div`
   margin-bottom: 12rem;
 `;
 
+export const LoaderDiv = styled.div`
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+  display: flex;
+  margin-bottom: 7rem;
+`;
+
 export const Send = styled.div`
   display: flex;
   align-items: center;

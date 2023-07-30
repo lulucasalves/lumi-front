@@ -7,6 +7,14 @@ export const Container = styled.div`
   margin-bottom: 7rem;
 `;
 
+export const LoaderDiv = styled.div`
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+  display: flex;
+  margin-bottom: 7rem;
+`;
+
 export const Send = styled.div`
   display: flex;
   align-items: center;
@@ -81,7 +89,6 @@ export const List = styled.div`
     font-weight: 500;
     margin-bottom: 2rem;
   }
-
 
   table {
     font-size: 1.4rem;

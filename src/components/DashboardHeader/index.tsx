@@ -18,35 +18,41 @@ import { useContext, useEffect, useState } from "react";
 import { IContext, MyContext } from "~/context/Boleto";
 import { ucList } from "~/client/boletos";
 import { Modal } from "../Modal";
+import { Oval } from "react-loader-spinner";
+import { theme } from "~/styles";
+import { Loader } from "../Loader";
+import { toastrError } from "~/features/toastr";
 
 export function DashboardHeader() {
   const { currentUc, ucs, setCurrentUc } = useContext<IContext>(MyContext);
   const [last, setLast] = useState({ value: "", url: "" });
   const [modal, setModal] = useState(false);
 
+  function ordenarPorDataEmissao(listaDeObjetos) {
+    const convertToDate = (dateStr) => {
+      const [day, month, year] = dateStr.split("/").map(Number);
+      return new Date(year, month - 1, day);
+    };
+
+    const sortedList = listaDeObjetos.sort((a, b) => {
+      const dateA = convertToDate(a.dataEmissao);
+      const dateB = convertToDate(b.dataEmissao);
+      return dateA - dateB;
+    });
+
+    return sortedList.reverse();
+  }
   useEffect(() => {
     (async () => {
       const [, numberUc] = currentUc.split(" - ");
 
       await ucList(numberUc).then((val) => {
-        function ordenarPorDataEmissao(listaDeObjetos) {
-          const convertToDate = (dateStr) => {
-            const [day, month, year] = dateStr.split("/").map(Number);
-            return new Date(year, month - 1, day);
-          };
-
-          const sortedList = listaDeObjetos.sort((a, b) => {
-            const dateA = convertToDate(a.dataEmissao);
-            const dateB = convertToDate(b.dataEmissao);
-            return dateA - dateB;
-          });
-
-          return sortedList.reverse();
+        if (val.message) toastrError(val.message);
+        else {
+          const value = ordenarPorDataEmissao(val)[0];
+          if (value)
+            setLast({ value: `R$ ${value.total.toFixed(2)}`, url: value.url });
         }
-
-        const value = ordenarPorDataEmissao(val)[0];
-        if (value)
-          setLast({ value: `R$ ${value.total.toFixed(2)}`, url: value.url });
       });
     })();
   }, [currentUc]);
@@ -99,10 +105,14 @@ export function DashboardHeader() {
             <p>Análise suas despesas de uma forma eficiente</p>
           </Title>
           <LastChecked>
-            <LastCheckedText>
-              <p>Sua última fatura</p>
-              <p>{last.value}</p>
-            </LastCheckedText>
+            {last.value ? (
+              <LastCheckedText>
+                <p>Sua última fatura</p>
+                <p>{last.value}</p>
+              </LastCheckedText>
+            ) : (
+              <Loader size={77} />
+            )}
             <LastCheckedButton onClick={() => window.open(last.url, "_blank")}>
               <BsDownload size={20} />
               <p>Baixar</p>
@@ -110,12 +120,16 @@ export function DashboardHeader() {
           </LastChecked>
           <div />
         </HeaderSecond>
-        <HeaderThird>
-          <p>UC: {currentUc}</p>
-          <div onClick={() => setModal(true)}>
-            <p>Mudar</p>
-          </div>
-        </HeaderThird>
+        {currentUc ? (
+          <HeaderThird>
+            <p>UC: {currentUc}</p>
+            <div onClick={() => setModal(true)}>
+              <p>Mudar</p>
+            </div>
+          </HeaderThird>
+        ) : (
+          <Loader size={34} />
+        )}
       </Header>
     </Container>
   );
