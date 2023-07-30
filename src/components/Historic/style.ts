@@ -19,63 +19,76 @@ export const Content = styled.div`
   margin-top: 1rem;
   margin-bottom: 12rem;
 
-  table {
-    width: 100%;
-    text-align: center;
-    font-size: 1.6rem;
-
-    th {
-      padding: 0.8rem;
-      font-weight: 500;
+  * {
+    &::-webkit-scrollbar {
+      display: none;
     }
+  }
 
-    tbody {
-      tr:last-child {
-        td {
-          border: none;
-        }
-      }
-    }
+  div {
+    overflow-x: scroll;
 
-    td {
-      padding: 0.5rem;
-      border-bottom: 0.1rem solid rgba(0, 0, 0, 0.3);
-      .payed {
-        padding: 0.5rem 1rem;
-        border: 0.1rem solid rgba(0, 0, 0, 0.5);
-        border-radius: 0.5rem;
+    table {
+      width: 100%;
+      min-width: 110rem;
+      text-align: center;
+      font-size: 1.6rem;
 
-        &:hover {
-          background-color: ${theme.colors.green};
-          cursor: pointer;
-          color: white;
-        }
+      th {
+        padding: 0.8rem;
+        font-weight: 500;
       }
 
-      .no-payed {
-        padding: 0.5rem 1rem;
-        border: 0.1rem solid rgba(0, 0, 0, 0.5);
-        border-radius: 0.5rem;
-
-        &:hover {
-          background-color: ${theme.colors.red};
-          cursor: pointer;
-          color: white;
-        }
-      }
-      div {
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-
-        div {
-          svg {
-            cursor: pointer;
-            fill: ${theme.colors.primary};
+      tbody {
+        tr:last-child {
+          td {
+            border: none;
           }
-          &:last-child {
+        }
+      }
+
+      td {
+        padding: 0.5rem;
+        border-bottom: 0.1rem solid rgba(0, 0, 0, 0.3);
+        .payed {
+          padding: 0.5rem 1rem;
+          border: 0.1rem solid rgba(0, 0, 0, 0.5);
+          border-radius: 0.5rem;
+
+          &:hover {
+            background-color: ${theme.colors.green};
+            cursor: pointer;
+            color: white;
+          }
+        }
+
+        .no-payed {
+          padding: 0.5rem 1rem;
+          border: 0.1rem solid rgba(0, 0, 0, 0.5);
+          border-radius: 0.5rem;
+
+          &:hover {
+            background-color: ${theme.colors.red};
+            cursor: pointer;
+            color: white;
+          }
+        }
+        div {
+          overflow-x: hidden;
+
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+
+          div {
             svg {
-              fill: ${theme.colors.red};
+              cursor: pointer;
+              fill: ${theme.colors.primary};
+            }
+            &:last-child {
+              svg {
+                fill: ${theme.colors.red};
+              }
             }
           }
         }
@@ -89,6 +102,11 @@ export const Send = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 5rem;
+
+  @media (max-width: 470px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
 `;
 
 export const Title = styled.p`

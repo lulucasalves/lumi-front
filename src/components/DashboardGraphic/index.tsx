@@ -62,11 +62,27 @@ export function DashboardGraphic() {
     `R$ ${tickValue.toFixed(2)}`;
 
   function findNearestPosition(val) {
-    const mouseX = val.clientX - 150;
+    const mouseX = val.clientX - 100;
+
+    // innerWidth > 1450
+    // ? 900
+    // : innerWidth > 1170
+    // ? 600
+    // : innerWidth > 830
+    // ? 300
+    // : innerWidth - 100
+
     const dataList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     // Encontrar o valor atual do mouse na escala de 0 a 800
-    const xScale = 800 / dataList.length;
+    const xScale =
+      innerWidth > 1450
+        ? 800 / dataList.length
+        : innerWidth > 1170
+        ? 550 / dataList.length
+        : innerWidth > 830
+        ? 200 / dataList.length
+        : (innerWidth - 150) / dataList.length;
 
     // Encontrar o valor mais próximo do mouse na lista de números fornecida
     let nearestIndex = 0;
@@ -142,7 +158,15 @@ export function DashboardGraphic() {
           onMouseMove={findNearestPosition}
           margin={{ left: 80 }}
           height={450}
-          width={900}
+          width={
+            innerWidth > 1450
+              ? 900
+              : innerWidth > 1170
+              ? 600
+              : innerWidth > 830
+              ? 300
+              : innerWidth - 100
+          }
         >
           {hint > -1 ? (
             <Hint

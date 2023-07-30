@@ -20,6 +20,11 @@ export const Send = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 5rem;
+
+  @media (max-width: 470px) {
+    flex-direction: column;
+    gap: 2rem;
+  }
 `;
 
 export const Title = styled.p`
@@ -69,12 +74,22 @@ export const Stastitics = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 830px) {
+    flex-direction: column;
+  }
 `;
 
 export const Line = styled.div`
   width: 0.2rem;
   background-color: ${theme.colors.black10};
   height: 45rem;
+
+  @media (max-width: 830px) {
+    height: 0.2rem;
+    width: 100%;
+    margin: 2rem 0;
+  }
 `;
 
 export const List = styled.div`

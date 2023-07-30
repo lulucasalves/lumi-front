@@ -11,6 +11,7 @@ export const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
   z-index: 9999;
 `;
 
@@ -51,12 +52,17 @@ export const ModalContent = styled.div`
     div {
       cursor: pointer;
       padding: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
       p {
         font-size: 1.6rem;
       }
 
       &:hover {
         background-color: ${theme.colors.black10};
+      }
+
+      &:last-child {
+        border: none;
       }
     }
   }

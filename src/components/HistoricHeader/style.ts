@@ -10,6 +10,10 @@ export const Header = styled.header`
   background-color: ${theme.colors.primary};
   color: ${theme.colors.white};
   width: 100%;
+
+  @media (max-width: 830px) {
+    padding: 4rem 2rem;
+  }
 `;
 
 export const HeaderFirst = styled.div`
@@ -17,6 +21,12 @@ export const HeaderFirst = styled.div`
   align-items: center;
   width: 100%;
   justify-content: space-between;
+
+  @media (max-width: 830px) {
+    flex-direction: column;
+    justify-content: center;
+    gap: 4rem;
+  }
 `;
 
 export const Menu = styled.menu`
@@ -24,6 +34,10 @@ export const Menu = styled.menu`
   align-items: center;
   gap: 1rem;
   cursor: pointer;
+
+  @media (max-width: 410px) {
+    flex-direction: column;
+  }
 `;
 
 export const MenuItem = styled.div<{ active?: boolean }>`
@@ -58,6 +72,13 @@ export const HeaderSecond = styled.div`
   justify-content: space-between;
   margin-top: 6rem;
   margin-bottom: 4rem;
+
+  @media (max-width: 830px) {
+    margin-top: 0rem;
+    margin-bottom: 4rem;
+    flex-direction: column;
+    text-align: center;
+  }
 `;
 
 export const Title = styled.div`
@@ -76,6 +97,12 @@ export const LastChecked = styled.div`
   display: flex;
   align-items: center;
   gap: 3rem;
+
+  @media (max-width: 830px) {
+    flex-direction: column;
+    margin-top: 2rem;
+    gap: 2rem;
+  }
 `;
 
 export const LastCheckedText = styled.div`
@@ -165,5 +192,10 @@ export const HeaderThird = styled.div`
         color: ${theme.colors.primary};
       }
     }
+  }
+
+  @media (max-width: 830px) {
+    flex-direction: column;
+    text-align: center;
   }
 `;

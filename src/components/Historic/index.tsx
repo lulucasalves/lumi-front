@@ -123,62 +123,64 @@ export function Historic() {
             accept="application/pdf"
             onChange={handleFileChange}
           />
-          <table cellSpacing={0}>
-            <thead>
-              <tr>
-                <th>Data de emissão</th>
-                <th>Data de vencimento</th>
-                <th>Energia elétrica</th>
-                <th>ICMS-ST</th>
-                <th>2° Via de débito</th>
-                <th>Valor total</th>
-                <th>Status</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {historic
-                ? historic
-                    .sort((a, b) => {
-                      const dateA = convertToDate(a.dataEmissao);
-                      const dateB = convertToDate(b.dataEmissao);
-                      return dateB - dateA;
-                    })
-                    .map((val, i) => {
-                      console.log(val);
-                      return (
-                        <tr key={i}>
-                          <td>{val.dataEmissao}</td>
-                          <td>{val.dataVencimento}</td>
-                          <td>{realModel(val.energiaEletrica)}</td>
-                          <td>{realModel(val.icmsSt)}</td>
-                          <td>{realModel(val.viaDebito)}</td>
-                          <td>{realModel(val.total)}</td>
-                          <td onClick={() => changeState(val.payed, val.id)}>
-                            <button
-                              className={val.payed ? "payed" : "no-payed"}
-                            >
-                              {val.payed ? "Pago" : "Não Pago"}
-                            </button>
-                          </td>
-                          <td>
-                            <div>
-                              <div
-                                onClick={() => window.open(val.url, "_blank")}
+          <div>
+            <table cellSpacing={0}>
+              <thead>
+                <tr>
+                  <th>Data de emissão</th>
+                  <th>Data de vencimento</th>
+                  <th>Energia elétrica</th>
+                  <th>ICMS-ST</th>
+                  <th>2° Via de débito</th>
+                  <th>Valor total</th>
+                  <th>Status</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {historic
+                  ? historic
+                      .sort((a, b) => {
+                        const dateA = convertToDate(a.dataEmissao);
+                        const dateB = convertToDate(b.dataEmissao);
+                        return dateB - dateA;
+                      })
+                      .map((val, i) => {
+                        console.log(val);
+                        return (
+                          <tr key={i}>
+                            <td>{val.dataEmissao}</td>
+                            <td>{val.dataVencimento}</td>
+                            <td>{realModel(val.energiaEletrica)}</td>
+                            <td>{realModel(val.icmsSt)}</td>
+                            <td>{realModel(val.viaDebito)}</td>
+                            <td>{realModel(val.total)}</td>
+                            <td onClick={() => changeState(val.payed, val.id)}>
+                              <button
+                                className={val.payed ? "payed" : "no-payed"}
                               >
-                                <BsDownload size={22} />
+                                {val.payed ? "Pago" : "Não Pago"}
+                              </button>
+                            </td>
+                            <td>
+                              <div>
+                                <div
+                                  onClick={() => window.open(val.url, "_blank")}
+                                >
+                                  <BsDownload size={22} />
+                                </div>
+                                <div onClick={() => deleteState(val.id)}>
+                                  <BsTrash3 size={18} />
+                                </div>
                               </div>
-                              <div onClick={() => deleteState(val.id)}>
-                                <BsTrash3 size={18} />
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                : null}
-            </tbody>
-          </table>
+                            </td>
+                          </tr>
+                        );
+                      })
+                  : null}
+              </tbody>
+            </table>
+          </div>
         </Content>
       ) : (
         <LoaderDiv>
