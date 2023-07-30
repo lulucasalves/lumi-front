@@ -20,10 +20,12 @@ export function Historic() {
   const { currentUc } = useContext<IContext>(MyContext);
   const [isSending, setIsSending] = useState(false);
 
-  function realModel(value: number) {
-    if (!value) return "-";
+  function realModel(value: number | string) {
+    if (!value || value === "-") return "-";
 
-    return `R$ ${value.toFixed(2)}`;
+    console.log(value);
+
+    return `R$ ${parseFloat(String(value).replace(",", ".")).toFixed(2)}`;
   }
 
   function changeState(value: boolean, id: string) {
@@ -97,6 +99,11 @@ export function Historic() {
       event.target.value = null;
     }
   };
+
+  const convertToDate = (dateStr) => {
+    const [day, month, year] = dateStr.split("/").map(Number);
+    return new Date(year, month - 1, day);
+  };
   return (
     <Container>
       <HistoricHeader />
@@ -131,34 +138,44 @@ export function Historic() {
             </thead>
             <tbody>
               {historic
-                ? historic.map((val, i) => {
-                    console.log(val);
-                    return (
-                      <tr key={i}>
-                        <td>{val.dataEmissao}</td>
-                        <td>{val.dataVencimento}</td>
-                        <td>{realModel(val.energiaEletrica)}</td>
-                        <td>{realModel(val.icmsSt)}</td>
-                        <td>{realModel(val.viaDebito)}</td>
-                        <td>{realModel(val.total)}</td>
-                        <td onClick={() => changeState(val.payed, val.id)}>
-                          <button className={val.payed ? "payed" : "no-payed"}>
-                            {val.payed ? "Pago" : "Não Pago"}
-                          </button>
-                        </td>
-                        <td>
-                          <div>
-                            <div onClick={() => window.open(val.url, "_blank")}>
-                              <BsDownload size={22} />
+                ? historic
+                    .sort((a, b) => {
+                      const dateA = convertToDate(a.dataEmissao);
+                      const dateB = convertToDate(b.dataEmissao);
+                      return dateB - dateA;
+                    })
+                    .map((val, i) => {
+                      console.log(val);
+                      return (
+                        <tr key={i}>
+                          <td>{val.dataEmissao}</td>
+                          <td>{val.dataVencimento}</td>
+                          <td>{realModel(val.energiaEletrica)}</td>
+                          <td>{realModel(val.icmsSt)}</td>
+                          <td>{realModel(val.viaDebito)}</td>
+                          <td>{realModel(val.total)}</td>
+                          <td onClick={() => changeState(val.payed, val.id)}>
+                            <button
+                              className={val.payed ? "payed" : "no-payed"}
+                            >
+                              {val.payed ? "Pago" : "Não Pago"}
+                            </button>
+                          </td>
+                          <td>
+                            <div>
+                              <div
+                                onClick={() => window.open(val.url, "_blank")}
+                              >
+                                <BsDownload size={22} />
+                              </div>
+                              <div onClick={() => deleteState(val.id)}>
+                                <BsTrash3 size={18} />
+                              </div>
                             </div>
-                            <div onClick={() => deleteState(val.id)}>
-                              <BsTrash3 size={18} />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
+                          </td>
+                        </tr>
+                      );
+                    })
                 : null}
             </tbody>
           </table>
