@@ -30,7 +30,29 @@ export const Content = styled.div`
     td {
       padding: 0.5rem;
       border-bottom: 0.1rem solid rgba(0, 0, 0, 0.3);
+      .payed {
+        padding: 0.5rem 1rem;
+        border: 0.1rem solid rgba(0, 0, 0, 0.5);
+        border-radius: 0.5rem;
 
+        &:hover {
+          background-color: ${theme.colors.green};
+          cursor: pointer;
+          color: white;
+        }
+      }
+
+      .no-payed {
+        padding: 0.5rem 1rem;
+        border: 0.1rem solid rgba(0, 0, 0, 0.5);
+        border-radius: 0.5rem;
+
+        &:hover {
+          background-color: ${theme.colors.red};
+          cursor: pointer;
+          color: white;
+        }
+      }
       div {
         display: flex;
         align-items: center;

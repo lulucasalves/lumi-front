@@ -1,14 +1,8 @@
 import { HistoricHeader } from "~/components";
 import { Container, Content, Send, SendButton, Title } from "./style";
-import {
-  BsArrowRightCircle,
-  BsDownload,
-  BsTrash,
-  BsTrash3,
-} from "react-icons/bs";
+import { BsArrowRightCircle, BsDownload, BsTrash3 } from "react-icons/bs";
 import { useContext, useEffect, useState } from "react";
-import { mockList } from "~/features";
-import { ucList } from "~/client/boletos";
+import { changeStateData, deletePdf, ucList } from "~/client/boletos";
 import { IContext, MyContext } from "~/context/Boleto";
 
 export function Historic() {
@@ -21,8 +15,16 @@ export function Historic() {
     return `R$ ${value.toFixed(2)}`;
   }
 
-  function voltsModel(value: number) {
-    return `${value.toFixed(2)} kWh`;
+  function changeState(value: boolean, id: string) {
+    (async () => {
+      await changeStateData(id, !value).then((res) => setHistoric(res));
+    })();
+  }
+
+  function deleteState(id: string) {
+    (async () => {
+      await deletePdf(id).then((res) => setHistoric(res));
+    })();
   }
 
   useEffect(() => {
@@ -67,13 +69,17 @@ export function Historic() {
                       <td>{realModel(val.icmsSt)}</td>
                       <td>{realModel(val.segundaVia)}</td>
                       <td>{realModel(val.total)}</td>
-                      <td>{val.payed ? "Pago" : "Não Pago"}</td>
+                      <td onClick={() => changeState(val.payed, val.id)}>
+                        <button className={val.payed ? "payed" : "no-payed"}>
+                          {val.payed ? "Pago" : "Não Pago"}
+                        </button>
+                      </td>
                       <td>
                         <div>
                           <div onClick={() => window.open(val.url, "_blank")}>
                             <BsDownload size={22} />
                           </div>
-                          <div>
+                          <div onClick={() => deleteState(val.id)}>
                             <BsTrash3 size={18} />
                           </div>
                         </div>

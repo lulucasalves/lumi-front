@@ -43,7 +43,6 @@ export function DashboardHeader() {
 
           return sortedList.reverse();
         }
-        console.log(ordenarPorDataEmissao(val)[0]);
 
         const value = ordenarPorDataEmissao(val)[0];
         if (value)
@@ -83,11 +82,11 @@ export function DashboardHeader() {
             alt="Lumini Logo"
           />
           <Menu>
-            <MenuItem active onClick={() => Router.replace("/")}>
+            <MenuItem active>
               <BsGraphUp size={24} />
               <p>Dashboard</p>
             </MenuItem>
-            <MenuItem>
+            <MenuItem onClick={() => Router.replace("/historic")}>
               <BsListCheck size={24} />
               <p>Histórico de faturas</p>
             </MenuItem>

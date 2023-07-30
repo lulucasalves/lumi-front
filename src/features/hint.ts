@@ -43,13 +43,15 @@ export function formatHint(
   ];
 
   for (const allValues of val) {
-    responses = [
-      ...responses,
-      {
-        title: translateThemes[allValues.value],
-        value: customTickFormatYAxis(allValues.y, dropdown),
-      },
-    ];
+    if (allValues.y) {
+      responses = [
+        ...responses,
+        {
+          title: translateThemes[allValues.value],
+          value: customTickFormatYAxis(allValues.y, dropdown),
+        },
+      ];
+    }
   }
 
   return responses;

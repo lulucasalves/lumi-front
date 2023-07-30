@@ -45,7 +45,5 @@ export function transformHistoric(val) {
     }
   });
 
-  console.log(objetoTransformado)
-
   return objetoTransformado;
 }

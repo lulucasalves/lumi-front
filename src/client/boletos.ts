@@ -13,6 +13,12 @@ export async function ucData(id: string) {
     .then((response: AxiosResponse<any>) => response.data);
 }
 
+export async function changeStateData(id: string, payed: boolean) {
+  return api
+    .put<any>(`/pdf`, { id, payed })
+    .then((response: AxiosResponse<any>) => response.data);
+}
+
 export async function ucList(id: string) {
   return api
     .get<any>(`/list/${id}`)
@@ -27,6 +33,6 @@ export async function deletePdf(id: string) {
 
 export async function addPdf(files: FormData) {
   return api
-    .post<any>(`/pdf}`, files)
+    .post<any>(`/pdf`, files)
     .then((response: AxiosResponse<any>) => response.data);
 }

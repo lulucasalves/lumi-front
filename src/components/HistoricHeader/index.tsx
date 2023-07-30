@@ -43,7 +43,6 @@ export function HistoricHeader() {
 
           return sortedList.reverse();
         }
-        console.log(ordenarPorDataEmissao(val)[0]);
 
         const value = ordenarPorDataEmissao(val)[0];
         if (value)

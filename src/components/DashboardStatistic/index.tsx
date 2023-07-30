@@ -106,7 +106,6 @@ export function DashboardStatistic() {
   }
 
   function changeLines(name: string) {
-    console.log(name);
     if (!lines.includes(name)) {
       setLines((old) => [...old, name]);
     } else {

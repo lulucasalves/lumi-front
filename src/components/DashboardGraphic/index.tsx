@@ -21,12 +21,12 @@ import {
 } from "react-vis";
 import { useEffect, useState } from "react";
 import { theme } from "~/styles";
-import { ucData, ucList } from "~/client/boletos";
+import { addPdf, ucData, ucList } from "~/client/boletos";
 import { transformHistoric } from "~/features/historic";
 
 export function DashboardGraphic() {
   const [data, setData] = useState([]);
-
+  const [selectedFile, setSelectedFile] = useState(null);
   const [hint, setHint] = useState(-1);
   const [historic, setHistoric] = useState([]);
 
@@ -37,7 +37,6 @@ export function DashboardGraphic() {
       });
 
       await ucList("7202788969").then((val) => {
-        console.log(val);
         setHistoric(transformHistoric(val));
       });
     })();
@@ -82,15 +81,41 @@ export function DashboardGraphic() {
     ];
   }
 
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("files", file);
+
+      (async () => {
+        await addPdf(formData).then((res) => console.log(res));
+      })();
+
+      event.target.value = null;
+    }
+  };
+
+  function handleUpload() {
+    document.getElementById("inputFile").click();
+  }
+
   return (
     <Container>
       <Send>
         <Title>Suas faturas</Title>
-        <SendButton>
+        <SendButton onClick={handleUpload}>
           <BsArrowRightCircle size={24} />
           <p>Enviar boleto</p>
         </SendButton>
       </Send>
+      <input
+        id="inputFile"
+        style={{ visibility: "hidden" }}
+        type="file"
+        accept="application/pdf"
+        onChange={handleFileChange}
+      />
       <Stastitics>
         <XYPlot
           onMouseLeave={() => setHint(-1)}

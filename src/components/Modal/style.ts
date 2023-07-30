@@ -26,10 +26,11 @@ export const Close = styled.div`
 
 export const ModalContent = styled.div`
   background-color: #fff;
-  min-width: 50rem;
   min-height: 30rem;
   position: relative;
+  max-height: 50rem;
   padding: 3rem;
+  overflow-y: scroll;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
@@ -39,12 +40,13 @@ export const ModalContent = styled.div`
   }
 
   div:last-child {
+    margin-top: 1rem;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 1rem;
+    overflow-y: scroll;
 
     div {
       cursor: pointer;
