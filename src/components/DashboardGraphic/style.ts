@@ -135,3 +135,9 @@ export const List = styled.div`
     }
   }
 `;
+
+export const Error = styled.p`
+  width: 100%;
+  text-align: center;
+  font-size: 3rem;
+`;

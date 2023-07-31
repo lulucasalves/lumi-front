@@ -46,21 +46,29 @@ export function DashboardHeader() {
     (async () => {
       if (currentUc) {
         const [, numberUc] = currentUc.split(" - ");
-
-        await ucList(numberUc).then((val) => {
+        setLast({ value: "", url: "" });
+        await ucList(numberUc, year).then((val) => {
           if (val.message) toastrError(val.message);
           else {
             const value = ordenarPorDataEmissao(val)[0];
-            if (value)
+            console.log(value);
+
+            if (value) {
               setLast({
                 value: `R$ ${value.total.toFixed(2)}`,
                 url: value.url,
               });
+            } else {
+              setLast({
+                value: `R$ 0,00`,
+                url: "value.url",
+              });
+            }
           }
         });
       }
     })();
-  }, [currentUc]);
+  }, [currentUc, year]);
 
   return (
     <Container data-testid="dashboard-header">

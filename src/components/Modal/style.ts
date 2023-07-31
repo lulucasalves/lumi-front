@@ -52,9 +52,10 @@ export const ModalContent = styled.div`
     overflow-y: scroll;
 
     div {
+      text-align: center;
+      width: 100%;
       cursor: pointer;
       padding: 1rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
       p {
         font-size: 1.6rem;
       }

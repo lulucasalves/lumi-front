@@ -2,6 +2,7 @@ import { HistoricHeader } from "../../components";
 import {
   Container,
   Content,
+  Error,
   LoaderDiv,
   Send,
   SendButton,
@@ -21,14 +22,12 @@ import { toastrError, toastrSuccess } from "../../features/toastr";
 
 export function Historic() {
   const [historic, setHistoric] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const { currentUc } = useContext<IContext>(MyContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const { currentUc, year } = useContext<IContext>(MyContext);
   const [isSending, setIsSending] = useState(false);
 
   function realModel(value: number | string) {
     if (!value || value === "-") return "-";
-
-    console.log(value);
 
     return `R$ ${parseFloat(String(value).replace(",", ".")).toFixed(2)}`;
   }
@@ -67,10 +66,11 @@ export function Historic() {
 
   useEffect(() => {
     if (currentUc) {
+      setIsLoading(true);
       const [, numberUc] = currentUc.split(" - ");
 
       (async () => {
-        await ucList(numberUc)
+        await ucList(numberUc, year)
           .then((val) => {
             if (val.message) toastrError(val.message);
             else setHistoric(val);
@@ -78,7 +78,7 @@ export function Historic() {
           .finally(() => setIsLoading(false));
       })();
     }
-  }, [currentUc]);
+  }, [currentUc, year]);
 
   function handleUpload() {
     if (!isSending) {
@@ -137,62 +137,63 @@ export function Historic() {
             onChange={handleFileChange}
           />
           <div>
-            <table cellSpacing={0}>
-              <thead>
-                <tr>
-                  <th>Data de emissão</th>
-                  <th>Data de vencimento</th>
-                  <th>Energia elétrica</th>
-                  <th>ICMS-ST</th>
-                  <th>2° Via de débito</th>
-                  <th>Valor total</th>
-                  <th>Status</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {historic
-                  ? historic
-                      .sort((a, b) => {
-                        const dateA = convertToDate(a.dataEmissao);
-                        const dateB = convertToDate(b.dataEmissao);
-                        return dateB - dateA;
-                      })
-                      .map((val, i) => {
-                        console.log(val);
-                        return (
-                          <tr key={i}>
-                            <td>{val.dataEmissao}</td>
-                            <td>{val.dataVencimento}</td>
-                            <td>{realModel(val.energiaEletrica)}</td>
-                            <td>{realModel(val.icmsSt)}</td>
-                            <td>{realModel(val.viaDebito)}</td>
-                            <td>{realModel(val.total)}</td>
-                            <td onClick={() => changeState(val.payed, val.id)}>
-                              <button
-                                className={val.payed ? "payed" : "no-payed"}
+            {historic && historic.find((val) => val.total > 0) ? (
+              <table cellSpacing={0}>
+                <thead>
+                  <tr>
+                    <th>Data de emissão</th>
+                    <th>Data de vencimento</th>
+                    <th>Energia elétrica</th>
+                    <th>ICMS-ST</th>
+                    <th>2° Via de débito</th>
+                    <th>Valor total</th>
+                    <th>Status</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {historic
+                    .sort((a, b) => {
+                      const dateA = convertToDate(a.dataEmissao);
+                      const dateB = convertToDate(b.dataEmissao);
+                      return dateB - dateA;
+                    })
+                    .map((val, i) => {
+                      return (
+                        <tr key={i}>
+                          <td>{val.dataEmissao}</td>
+                          <td>{val.dataVencimento}</td>
+                          <td>{realModel(val.energiaEletrica)}</td>
+                          <td>{realModel(val.icmsSt)}</td>
+                          <td>{realModel(val.viaDebito)}</td>
+                          <td>{realModel(val.total)}</td>
+                          <td onClick={() => changeState(val.payed, val.id)}>
+                            <button
+                              className={val.payed ? "payed" : "no-payed"}
+                            >
+                              {val.payed ? "Pago" : "Não Pago"}
+                            </button>
+                          </td>
+                          <td>
+                            <div>
+                              <div
+                                onClick={() => window.open(val.url, "_blank")}
                               >
-                                {val.payed ? "Pago" : "Não Pago"}
-                              </button>
-                            </td>
-                            <td>
-                              <div>
-                                <div
-                                  onClick={() => window.open(val.url, "_blank")}
-                                >
-                                  <BsDownload size={22} />
-                                </div>
-                                <div onClick={() => deleteState(val.id)}>
-                                  <BsTrash3 size={18} />
-                                </div>
+                                <BsDownload size={22} />
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                  : null}
-              </tbody>
-            </table>
+                              <div onClick={() => deleteState(val.id)}>
+                                <BsTrash3 size={18} />
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            ) : (
+              <Error>Você ainda não possui dados neste UC!</Error>
+            )}
           </div>
         </Content>
       ) : (

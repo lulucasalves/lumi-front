@@ -42,7 +42,7 @@ export function DashboardStatistic() {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [dropdown, setDropdown] = useState("Quantidade");
   const [lines, setLines] = useState(["total"]);
-  const { currentUc } = useContext<IContext>(MyContext);
+  const { currentUc, year } = useContext<IContext>(MyContext);
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -56,10 +56,9 @@ export function DashboardStatistic() {
     (async () => {
       const [, numberUc] = currentUc.split(" - ");
 
-      console.log(currentUc);
       setIsLoading(true);
 
-      await ucData(numberUc)
+      await ucData(numberUc, year)
         .then((val) => {
           if (val.message) toastrError(val.message);
           else
@@ -74,7 +73,7 @@ export function DashboardStatistic() {
         })
         .finally(() => setIsLoading(false));
     })();
-  }, [currentUc]);
+  }, [currentUc, year]);
 
   const customTickFormatXAxis = (tickValue: number) => {
     return valueToNameMap[tickValue] || "";
@@ -228,18 +227,23 @@ export function DashboardStatistic() {
   }
 
   return !isLoading ? (
-    <Container data-testid="dashboard-statistics">
-      <Send>
-        <Title>Detalhes dos gastos</Title>
-        <DropdownButtonContainer>
-          <Button onClick={handleDropdownToggle}>
-            <RiArrowDownSFill />
-            {dropdown}
-          </Button>
-          {isDropdownOpen && (
-            <DropdownContentContainer>
-              {["Quantidade", "Preço Unitário", "Tarifa Unitária", "Valor"].map(
-                (val, i) => {
+    data?.total.Valor.find((val) => val.y > 0) ? (
+      <Container data-testid="dashboard-statistics">
+        <Send>
+          <Title>Detalhes dos gastos</Title>
+          <DropdownButtonContainer>
+            <Button onClick={handleDropdownToggle}>
+              <RiArrowDownSFill />
+              {dropdown}
+            </Button>
+            {isDropdownOpen && (
+              <DropdownContentContainer>
+                {[
+                  "Quantidade",
+                  "Preço Unitário",
+                  "Tarifa Unitária",
+                  "Valor",
+                ].map((val, i) => {
                   return (
                     val !== dropdown && (
                       <div
@@ -253,198 +257,210 @@ export function DashboardStatistic() {
                       </div>
                     )
                   );
+                })}
+              </DropdownContentContainer>
+            )}
+          </DropdownButtonContainer>
+        </Send>
+        {data ? (
+          <Statistics>
+            <Graphic>
+              <XYPlot
+                onMouseLeave={() => setHint(-1)}
+                onMouseMove={findNearestPosition}
+                margin={{ left: 80 }}
+                height={450}
+                width={
+                  width > 1450
+                    ? 900
+                    : width > 1170
+                    ? 600
+                    : width > 830
+                    ? 300
+                    : width - 25
                 }
-              )}
-            </DropdownContentContainer>
-          )}
-        </DropdownButtonContainer>
-      </Send>
-      {data ? (
-        <Statistics>
-          <Graphic>
-            <XYPlot
-              onMouseLeave={() => setHint(-1)}
-              onMouseMove={findNearestPosition}
-              margin={{ left: 80 }}
-              height={450}
-              width={
-                width > 1450
-                  ? 900
-                  : width > 1170
-                  ? 600
-                  : width > 830
-                  ? 300
-                  : width - 25
-              }
-            >
-              {hint > -1 && lines.length > 0 ? (
-                <Hint
-                  format={(val) => formatHint(val, dropdown)}
-                  value={{
-                    totalValues: lines.map((value) => {
-                      return data[value][dropdown]
-                        ? {
-                            value,
-                            x: hint,
-                            y: data[value][dropdown].filter(
-                              (val) => val.x === hint
-                            )[0].y,
-                          }
-                        : { x: hint, y: 0 };
-                    }),
-                    x: hint,
-                    y: data[lines[0]][dropdown]
-                      ? data[lines[0]][dropdown].filter(
-                          (val) => val.x === hint
-                        )[0].y
-                      : 0,
+              >
+                {hint > -1 && lines.length > 0 ? (
+                  <Hint
+                    format={(val) => formatHint(val, dropdown)}
+                    value={{
+                      totalValues: lines.map((value) => {
+                        return data[value][dropdown]
+                          ? {
+                              value,
+                              x: hint,
+                              y: data[value][dropdown].filter(
+                                (val) => val.x === hint
+                              )[0].y,
+                            }
+                          : { x: hint, y: 0 };
+                      }),
+                      x: hint,
+                      y: data[lines[0]][dropdown]
+                        ? data[lines[0]][dropdown].filter(
+                            (val) => val.x === hint
+                          )[0].y
+                        : 0,
+                    }}
+                  />
+                ) : null}
+                <ChartLabel
+                  text="Mês"
+                  className="alt-x-label"
+                  includeMargin={false}
+                  xPercent={0.01}
+                  yPercent={1.01}
+                />
+                <ChartLabel
+                  text={dropdown === "Quantidade" ? "Valor kWh" : "Valor R$"}
+                  className="alt-y-label"
+                  includeMargin={false}
+                  xPercent={0.02}
+                  yPercent={0.02}
+                  style={{
+                    transform: "rotate(-90)",
+                    textAnchor: "end",
                   }}
                 />
-              ) : null}
-              <ChartLabel
-                text="Mês"
-                className="alt-x-label"
-                includeMargin={false}
-                xPercent={0.01}
-                yPercent={1.01}
-              />
-              <ChartLabel
-                text={dropdown === "Quantidade" ? "Valor kWh" : "Valor R$"}
-                className="alt-y-label"
-                includeMargin={false}
-                xPercent={0.02}
-                yPercent={0.02}
-                style={{
-                  transform: "rotate(-90)",
-                  textAnchor: "end",
-                }}
-              />
-              {lines.includes("total") ? (
-                <LineSeries
-                  data={data.total[dropdown] ? data.total[dropdown] : []}
-                  color={theme.colors.blue}
-                />
-              ) : (
-                <LineSeries data={[{ x: 1, y: 1 }]} color="transparent" />
-              )}
-              {lines.includes("energiaEletrica") ? (
-                <LineSeries
-                  data={
-                    data.energiaEletrica[dropdown]
-                      ? data.energiaEletrica[dropdown]
-                      : [null]
-                  }
-                  color={theme.colors.red}
-                />
-              ) : null}
-              {lines.includes("energiaInjetada") ? (
-                <LineSeries
-                  data={
-                    data.energiaInjetada[dropdown]
-                      ? data.energiaInjetada[dropdown]
-                      : []
-                  }
-                  color={theme.colors.pink}
-                />
-              ) : null}
-              {lines.includes("icms") ? (
-                <LineSeries
-                  data={data.icms[dropdown] ? data.icms[dropdown] : []}
-                  color={theme.colors.ciano}
-                />
-              ) : null}
-              {lines.includes("icmsSt") ? (
-                <LineSeries
-                  data={data.icmsSt[dropdown] ? data.icmsSt[dropdown] : []}
-                  color={theme.colors.green}
-                />
-              ) : null}
-              {lines.includes("contribuicaoPublica") ? (
-                <LineSeries
-                  data={
-                    data.contribuicaoPublica[dropdown]
-                      ? data.contribuicaoPublica[dropdown]
-                      : []
-                  }
-                  color={theme.colors.grey}
-                />
-              ) : null}
-              {hint > -1 ? (
-                <VerticalGridLines
-                  tickValues={[hint]}
-                  style={{ stroke: "#000" }}
-                />
-              ) : null}
-              <XAxis
-                style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
-                tickFormat={customTickFormatXAxis}
-              />
-              <YAxis
-                style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
-                tickFormat={customTickFormatYAxis}
-              />
-              <VerticalGridLines />
-              <HorizontalGridLines />
-            </XYPlot>
-            {selectItems()}
-          </Graphic>
-          <Line />
-          <List>
-            <h3>Valores comparados á ultima fatura</h3>
-            <div>
-              <p>Energia Elétrica</p>
-              <p>
-                {generatePercentage(data, "energiaEletrica", "Quantidade", "A")}
-              </p>
-              <p>
-                {generatePercentage(
-                  data,
-                  "energiaEletrica",
-                  "Preço Unitário",
-                  "O"
+                {lines.includes("total") ? (
+                  <LineSeries
+                    data={data.total[dropdown] ? data.total[dropdown] : []}
+                    color={theme.colors.blue}
+                  />
+                ) : (
+                  <LineSeries data={[{ x: 1, y: 1 }]} color="transparent" />
                 )}
-              </p>
-              <p>
-                {generatePercentage(
-                  data,
-                  "energiaEletrica",
-                  "Tarifa Unitária",
-                  "A"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>Energia Injetada</p>
-              <p>
-                {generatePercentage(data, "energiaInjetada", "Quantidade", "A")}
-              </p>
-              <p>
-                {generatePercentage(
-                  data,
-                  "energiaInjetada",
-                  "Preço Unitário",
-                  "O"
-                )}
-              </p>
-              <p>
-                {generatePercentage(
-                  data,
-                  "energiaInjetada",
-                  "Tarifa Unitária",
-                  "A"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>ICMS</p>
-              <p>{generatePercentage(data, "icms", "Quantidade", "A")}</p>
-              <p>{generatePercentage(data, "icms", "Preço Unitário", "O")}</p>
-              <p>{generatePercentage(data, "icms", "Tarifa Unitária", "A")}</p>
-            </div>
-          </List>
-        </Statistics>
-      ) : null}
-    </Container>
+                {lines.includes("energiaEletrica") ? (
+                  <LineSeries
+                    data={
+                      data.energiaEletrica[dropdown]
+                        ? data.energiaEletrica[dropdown]
+                        : [null]
+                    }
+                    color={theme.colors.red}
+                  />
+                ) : null}
+                {lines.includes("energiaInjetada") ? (
+                  <LineSeries
+                    data={
+                      data.energiaInjetada[dropdown]
+                        ? data.energiaInjetada[dropdown]
+                        : []
+                    }
+                    color={theme.colors.pink}
+                  />
+                ) : null}
+                {lines.includes("icms") ? (
+                  <LineSeries
+                    data={data.icms[dropdown] ? data.icms[dropdown] : []}
+                    color={theme.colors.ciano}
+                  />
+                ) : null}
+                {lines.includes("icmsSt") ? (
+                  <LineSeries
+                    data={data.icmsSt[dropdown] ? data.icmsSt[dropdown] : []}
+                    color={theme.colors.green}
+                  />
+                ) : null}
+                {lines.includes("contribuicaoPublica") ? (
+                  <LineSeries
+                    data={
+                      data.contribuicaoPublica[dropdown]
+                        ? data.contribuicaoPublica[dropdown]
+                        : []
+                    }
+                    color={theme.colors.grey}
+                  />
+                ) : null}
+                {hint > -1 ? (
+                  <VerticalGridLines
+                    tickValues={[hint]}
+                    style={{ stroke: "#000" }}
+                  />
+                ) : null}
+                <XAxis
+                  style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
+                  tickFormat={customTickFormatXAxis}
+                />
+                <YAxis
+                  style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
+                  tickFormat={customTickFormatYAxis}
+                />
+                <VerticalGridLines />
+                <HorizontalGridLines />
+              </XYPlot>
+              {selectItems()}
+            </Graphic>
+            <Line />
+            <List>
+              <h3>Valores comparados á ultima fatura</h3>
+              <div>
+                <p>Energia Elétrica</p>
+                <p>
+                  {generatePercentage(
+                    data,
+                    "energiaEletrica",
+                    "Quantidade",
+                    "A"
+                  )}
+                </p>
+                <p>
+                  {generatePercentage(
+                    data,
+                    "energiaEletrica",
+                    "Preço Unitário",
+                    "O"
+                  )}
+                </p>
+                <p>
+                  {generatePercentage(
+                    data,
+                    "energiaEletrica",
+                    "Tarifa Unitária",
+                    "A"
+                  )}
+                </p>
+              </div>
+              <div>
+                <p>Energia Injetada</p>
+                <p>
+                  {generatePercentage(
+                    data,
+                    "energiaInjetada",
+                    "Quantidade",
+                    "A"
+                  )}
+                </p>
+                <p>
+                  {generatePercentage(
+                    data,
+                    "energiaInjetada",
+                    "Preço Unitário",
+                    "O"
+                  )}
+                </p>
+                <p>
+                  {generatePercentage(
+                    data,
+                    "energiaInjetada",
+                    "Tarifa Unitária",
+                    "A"
+                  )}
+                </p>
+              </div>
+              <div>
+                <p>ICMS</p>
+                <p>{generatePercentage(data, "icms", "Quantidade", "A")}</p>
+                <p>{generatePercentage(data, "icms", "Preço Unitário", "O")}</p>
+                <p>
+                  {generatePercentage(data, "icms", "Tarifa Unitária", "A")}
+                </p>
+              </div>
+            </List>
+          </Statistics>
+        ) : null}
+      </Container>
+    ) : null
   ) : (
     <LoaderDiv data-testid="dashboard-statistics">
       <Loader size={100} />

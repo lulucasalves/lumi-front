@@ -10,9 +10,9 @@ export async function getUcsAndYears() {
     });
 }
 
-export async function ucData(id: string) {
+export async function ucData(id: string, year: string) {
   return api
-    .get<unknown>(`/uc/${id}`)
+    .get<unknown>(`/uc/${id}/${year}`)
     .then((response: AxiosResponse<unknown>) => response.data)
     .catch((error) => {
       console.log(error);
@@ -28,9 +28,9 @@ export async function changeStateData(id: string, payed: boolean) {
     });
 }
 
-export async function ucList(id: string) {
+export async function ucList(id: string, year: string) {
   return api
-    .get<unknown>(`/list/${id}`)
+    .get<unknown>(`/list/${id}/${year}`)
     .then((response: AxiosResponse<unknown>) => response.data)
     .catch((error) => {
       console.log(error);

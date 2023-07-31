@@ -22,9 +22,12 @@ import { Loader } from "../Loader";
 import { toastrError } from "../../features/toastr";
 
 export function HistoricHeader() {
-  const { currentUc, ucs, setCurrentUc } = useContext<IContext>(MyContext);
+  const { currentUc, ucs, setCurrentUc, year, setYear, years } =
+    useContext<IContext>(MyContext);
   const [last, setLast] = useState({ value: "", url: "" });
-  const [modal, setModal] = useState(false);
+  const [modalUc, setModalUc] = useState(false);
+  const [modalYear, setModalYear] = useState(false);
+
   function ordenarPorDataEmissao(listaDeObjetos) {
     const convertToDate = (dateStr) => {
       const [day, month, year] = dateStr.split("/").map(Number);
@@ -43,25 +46,33 @@ export function HistoricHeader() {
     (async () => {
       if (currentUc) {
         const [, numberUc] = currentUc.split(" - ");
-
-        await ucList(numberUc).then((val) => {
+        setLast({ value: "", url: "" });
+        await ucList(numberUc, year).then((val) => {
           if (val.message) toastrError(val.message);
           else {
             const value = ordenarPorDataEmissao(val)[0];
-            if (value)
+            console.log(value);
+
+            if (value) {
               setLast({
                 value: `R$ ${value.total.toFixed(2)}`,
                 url: value.url,
               });
+            } else {
+              setLast({
+                value: `R$ 0,00`,
+                url: "value.url",
+              });
+            }
           }
         });
       }
     })();
-  }, [currentUc]);
+  }, [currentUc, year]);
 
   return (
     <Container data-testid="historic-header">
-      <Modal isOpen={modal} onClose={() => setModal(false)}>
+      <Modal isOpen={modalUc} onClose={() => setModalUc(false)}>
         <h2>Selecione a UC desejada</h2>
         <div>
           {ucs
@@ -69,8 +80,28 @@ export function HistoricHeader() {
                 return (
                   <div
                     onClick={() => {
-                      setModal(false);
+                      setModalUc(false);
                       setCurrentUc(val);
+                    }}
+                    key={i}
+                  >
+                    <p>{val}</p>
+                  </div>
+                );
+              })
+            : null}
+        </div>
+      </Modal>
+      <Modal isOpen={modalYear} onClose={() => setModalYear(false)}>
+        <h2>Selecione o ano desejado</h2>
+        <div>
+          {years
+            ? years.map((val, i) => {
+                return (
+                  <div
+                    onClick={() => {
+                      setModalYear(false);
+                      setYear(val);
                     }}
                     key={i}
                   >
@@ -104,7 +135,7 @@ export function HistoricHeader() {
         <HeaderSecond>
           <Title>
             <h2>Bem vindo(a)</h2>
-            <p>Veja seu histórico de faturas</p>
+            <p>Histórico de faturas</p>
           </Title>
           <LastChecked>
             {last.value ? (
@@ -129,7 +160,18 @@ export function HistoricHeader() {
         {currentUc ? (
           <HeaderThird>
             <p>UC: {currentUc}</p>
-            <div onClick={() => setModal(true)}>
+            <div onClick={() => setModalUc(true)}>
+              <p>Mudar</p>
+            </div>
+          </HeaderThird>
+        ) : (
+          <Loader size={34} />
+        )}
+        <br />
+        {year ? (
+          <HeaderThird>
+            <p>Ano: {year}</p>
+            <div onClick={() => setModalYear(true)}>
               <p>Mudar</p>
             </div>
           </HeaderThird>

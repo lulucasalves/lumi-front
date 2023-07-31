@@ -101,6 +101,12 @@ export const Content = styled.div`
   }
 `;
 
+export const Error = styled.div`
+  font-size: 3rem;
+  text-align: center;
+  width: 100%;
+`;
+
 export const Send = styled.div`
   display: flex;
   align-items: center;

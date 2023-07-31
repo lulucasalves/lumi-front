@@ -2,6 +2,7 @@ import { BsArrowRightCircle, BsCheckLg, BsX } from "react-icons/bs";
 import { translateMonths, valueToNameMap } from "../../features";
 import {
   Container,
+  Error,
   Line,
   List,
   LoaderDiv,
@@ -30,7 +31,7 @@ import { IContext, MyContext } from "~/context/Boleto";
 
 export function DashboardGraphic() {
   const [data, setData] = useState([]);
-  const { currentUc } = useContext<IContext>(MyContext);
+  const { currentUc, year } = useContext<IContext>(MyContext);
   const [isLoadingGraph, setIsLoadingGraph] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isLoadingList, setIsLoadingList] = useState(false);
@@ -43,18 +44,17 @@ export function DashboardGraphic() {
       if (currentUc) {
         const [, numberUc] = currentUc.split(" - ");
 
-        console.log(currentUc);
         setIsLoadingList(true);
         setIsLoadingGraph(true);
 
-        await ucData(numberUc)
+        await ucData(numberUc, year)
           .then((val) => {
             if (val.message) toastrError(val.message);
             else setData(val.Total.Valor.sort((a, b) => a.x - b.x));
           })
           .finally(() => setIsLoadingGraph(false));
 
-        await ucList(numberUc)
+        await ucList(numberUc, year)
           .then((val) => {
             if (val.message) toastrError(val.message);
             else {
@@ -64,7 +64,7 @@ export function DashboardGraphic() {
           .finally(() => setIsLoadingList(false));
       }
     })();
-  }, [currentUc]);
+  }, [currentUc, year]);
 
   const customTickFormatXAxis = (tickValue: number) => {
     return valueToNameMap[tickValue] || "";
@@ -141,116 +141,139 @@ export function DashboardGraphic() {
   }
 
   return !isLoadingGraph && !isLoadingList ? (
-    <Container data-testid="dashboard-graphic">
-      <Send>
-        <Title>Suas faturas</Title>
-        <SendButton onClick={handleUpload}>
-          <BsArrowRightCircle size={24} />
-          <p>{!isSending ? "Enviar boleto" : "Enviando..."}</p>
-        </SendButton>
-      </Send>
-      <input
-        id="inputFile"
-        style={{ visibility: "hidden" }}
-        type="file"
-        accept="application/pdf"
-        onChange={handleFileChange}
-      />
-      <Statistics>
-        <XYPlot
-          onMouseLeave={() => setHint(-1)}
-          onMouseMove={findNearestPosition}
-          margin={{ left: 80 }}
-          height={450}
-          width={
-            width > 1450
-              ? 900
-              : width > 1170
-              ? 600
-              : width > 830
-              ? 300
-              : width - 25
-          }
-        >
-          {hint > -1 ? (
-            <Hint
-              format={formatHint}
-              align="center"
-              value={{
-                x: hint,
-                y: data.filter((val) => val.x === hint)[0].y,
+    historic.find((val) => val.value > 0) ? (
+      <Container data-testid="dashboard-graphic">
+        <Send>
+          <Title>Suas faturas</Title>
+          <SendButton onClick={handleUpload}>
+            <BsArrowRightCircle size={24} />
+            <p>{!isSending ? "Enviar boleto" : "Enviando..."}</p>
+          </SendButton>
+        </Send>
+        <input
+          id="inputFile"
+          style={{ visibility: "hidden" }}
+          type="file"
+          accept="application/pdf"
+          onChange={handleFileChange}
+        />
+        <Statistics>
+          <XYPlot
+            onMouseLeave={() => setHint(-1)}
+            onMouseMove={findNearestPosition}
+            margin={{ left: 80 }}
+            height={450}
+            width={
+              width > 1450
+                ? 900
+                : width > 1170
+                ? 600
+                : width > 830
+                ? 300
+                : width - 25
+            }
+          >
+            {hint > -1 ? (
+              <Hint
+                format={formatHint}
+                align="center"
+                value={{
+                  x: hint,
+                  y: data.filter((val) => val.x === hint)[0].y,
+                }}
+              />
+            ) : null}
+            <ChartLabel
+              text="Mês"
+              className="alt-x-label"
+              includeMargin={false}
+              xPercent={0.01}
+              yPercent={1.01}
+            />
+            <ChartLabel
+              text="Gastos R$"
+              className="alt-y-label"
+              includeMargin={false}
+              xPercent={0.02}
+              yPercent={0.02}
+              style={{
+                transform: "rotate(-90)",
+                textAnchor: "end",
               }}
             />
-          ) : null}
-          <ChartLabel
-            text="Mês"
-            className="alt-x-label"
-            includeMargin={false}
-            xPercent={0.01}
-            yPercent={1.01}
-          />
-          <ChartLabel
-            text="Gastos R$"
-            className="alt-y-label"
-            includeMargin={false}
-            xPercent={0.02}
-            yPercent={0.02}
-            style={{
-              transform: "rotate(-90)",
-              textAnchor: "end",
-            }}
-          />
-          <LineSeries data={data} color={theme.colors.blue} />
-          {hint > -1 ? (
-            <VerticalGridLines tickValues={[hint]} style={{ stroke: "#000" }} />
-          ) : null}
+            <LineSeries data={data} color={theme.colors.blue} />
+            {hint > -1 ? (
+              <VerticalGridLines
+                tickValues={[hint]}
+                style={{ stroke: "#000" }}
+              />
+            ) : null}
 
-          <XAxis
-            style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
-            tickFormat={customTickFormatXAxis}
-          />
-          <YAxis
-            style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
-            tickFormat={customTickFormatYAxis}
-          />
-          <VerticalGridLines />
-          <HorizontalGridLines />
-        </XYPlot>
-        <Line />
-        <List>
-          <h3>Últimas Faturas</h3>
-          <table cellSpacing={0}>
-            <thead>
-              <tr>
-                <th>Mês</th>
-                <th>Preço</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {historic
-                ? historic.map((val, i) => {
-                    return (
-                      <tr key={i}>
-                        <td>{val.month}</td>
-                        <td>
-                          {val.value ? `R$ ${val.value.toFixed(2)}` : "-"}
-                        </td>
-                        <td>
-                          <div>
-                            {val.payed ? <BsCheckLg /> : <BsX size={18} />}
-                            {val.payed ? "Pago" : "Não Pago"}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                : null}
-            </tbody>
-          </table>
-        </List>
-      </Statistics>
-    </Container>
+            <XAxis
+              style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
+              tickFormat={customTickFormatXAxis}
+            />
+            <YAxis
+              style={{ line: { stroke: "rgba(0,0,0,0.5)" } }}
+              tickFormat={customTickFormatYAxis}
+            />
+            <VerticalGridLines />
+            <HorizontalGridLines />
+          </XYPlot>
+          <Line />
+          <List>
+            <h3>Últimas Faturas</h3>
+            <table cellSpacing={0}>
+              <thead>
+                <tr>
+                  <th>Mês</th>
+                  <th>Preço</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {historic
+                  ? historic.map((val, i) => {
+                      return (
+                        <tr key={i}>
+                          <td>{val.month}</td>
+                          <td>
+                            {val.value ? `R$ ${val.value.toFixed(2)}` : "-"}
+                          </td>
+                          <td>
+                            <div>
+                              {val.payed ? <BsCheckLg /> : <BsX size={18} />}
+                              {val.payed ? "Pago" : "Não Pago"}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null}
+              </tbody>
+            </table>
+          </List>
+        </Statistics>
+      </Container>
+    ) : (
+      <Container data-testid="dashboard-graphic">
+        <Send>
+          <Title>Suas faturas</Title>
+          <SendButton onClick={handleUpload}>
+            <BsArrowRightCircle size={24} />
+            <p>{!isSending ? "Enviar boleto" : "Enviando..."}</p>
+          </SendButton>
+        </Send>
+        <input
+          id="inputFile"
+          style={{ visibility: "hidden" }}
+          type="file"
+          accept="application/pdf"
+          onChange={handleFileChange}
+        />
+        <Error>Você ainda não possui dados neste UC!</Error>
+      </Container>
+    )
   ) : (
     <LoaderDiv data-testid="dashboard-graphic">
       <Loader size={100} />
