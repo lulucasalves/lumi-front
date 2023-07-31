@@ -22,9 +22,11 @@ import { Loader } from "../Loader";
 import { toastrError } from "../../features/toastr";
 
 export function DashboardHeader() {
-  const { currentUc, ucs, setCurrentUc } = useContext<IContext>(MyContext);
+  const { currentUc, ucs, setCurrentUc, year, setYear } =
+    useContext<IContext>(MyContext);
   const [last, setLast] = useState({ value: "", url: "" });
-  const [modal, setModal] = useState(false);
+  const [modalUc, setModalUc] = useState(false);
+  const [modalYear, setModalYear] = useState(false);
 
   function ordenarPorDataEmissao(listaDeObjetos) {
     const convertToDate = (dateStr) => {
@@ -62,7 +64,7 @@ export function DashboardHeader() {
 
   return (
     <Container data-testid="dashboard-header">
-      <Modal isOpen={modal} onClose={() => setModal(false)}>
+      <Modal isOpen={modalUc} onClose={() => setModalUc(false)}>
         <h2>Selecione a UC desejada</h2>
         <div>
           {ucs
@@ -70,8 +72,28 @@ export function DashboardHeader() {
                 return (
                   <div
                     onClick={() => {
-                      setModal(false);
+                      setModalUc(false);
                       setCurrentUc(val);
+                    }}
+                    key={i}
+                  >
+                    <p>{val}</p>
+                  </div>
+                );
+              })
+            : null}
+        </div>
+      </Modal>
+      <Modal isOpen={modalYear} onClose={() => setModalYear(false)}>
+        <h2>Selecione o ano das faturas a serem requisitadas</h2>
+        <div>
+          {ucs
+            ? ucs.map((val, i) => {
+                return (
+                  <div
+                    onClick={() => {
+                      setModalYear(false);
+                      setYear(val);
                     }}
                     key={i}
                   >
@@ -130,7 +152,18 @@ export function DashboardHeader() {
         {currentUc ? (
           <HeaderThird>
             <p>UC: {currentUc}</p>
-            <div onClick={() => setModal(true)}>
+            <div onClick={() => setModalUc(true)}>
+              <p>Mudar</p>
+            </div>
+          </HeaderThird>
+        ) : (
+          <Loader size={34} />
+        )}
+        <br />
+        {year ? (
+          <HeaderThird>
+            <p>Ano: {year}</p>
+            <div onClick={() => setModalYear(true)}>
               <p>Mudar</p>
             </div>
           </HeaderThird>

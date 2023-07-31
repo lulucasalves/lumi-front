@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { api } from "./fetcher";
 
-export async function getUcs() {
+export async function getUcsAndYears() {
   return api
     .get<unknown>(`/`)
     .then((response: AxiosResponse<unknown>) => response.data)

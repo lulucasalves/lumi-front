@@ -30,9 +30,10 @@ export const ModalContent = styled.div`
   min-height: 30rem;
   position: relative;
   max-height: 50rem;
+
   padding: 3rem;
   overflow-y: scroll;
-  border-radius: 4px;
+  border-radius: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
   h2 {

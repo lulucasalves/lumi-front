@@ -20,39 +20,49 @@ import {
   VerticalGridLines,
   Hint,
 } from "react-vis";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { theme } from "../../styles";
 import { addPdf, ucData, ucList } from "../../client/boletos";
 import { transformHistoric } from "../../features/historic";
 import { Loader } from "../Loader";
 import { toastrError, toastrSuccess } from "../../features/toastr";
+import { IContext, MyContext } from "~/context/Boleto";
 
 export function DashboardGraphic() {
   const [data, setData] = useState([]);
-  const [isLoadingGraph, setIsLoadingGraph] = useState(true);
+  const { currentUc } = useContext<IContext>(MyContext);
+  const [isLoadingGraph, setIsLoadingGraph] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [isLoadingList, setIsLoadingList] = useState(true);
-
+  const [isLoadingList, setIsLoadingList] = useState(false);
+  const width = typeof window !== "undefined" ? window.innerWidth : 900;
   const [hint, setHint] = useState(-1);
   const [historic, setHistoric] = useState([]);
 
   useEffect(() => {
     (async () => {
-      await ucData("7202788969")
-        .then((val) => {
-          if (val.message) toastrError(val.message);
-          else setData(val.Total.Valor.sort((a, b) => a.x - b.x));
-        })
-        .finally(() => setIsLoadingGraph(false));
+      if (currentUc) {
+        const [, numberUc] = currentUc.split(" - ");
+        setIsLoadingList(true);
+        setIsLoadingGraph(true);
 
-      await ucList("7202788969")
-        .then((val) => {
-          if (val.message) toastrError(val.message);
-          else setHistoric(transformHistoric(val));
-        })
-        .finally(() => setIsLoadingList(false));
+        await ucData(numberUc)
+          .then((val) => {
+            if (val.message) toastrError(val.message);
+            else setData(val.Total.Valor.sort((a, b) => a.x - b.x));
+          })
+          .finally(() => setIsLoadingGraph(false));
+
+        await ucList(numberUc)
+          .then((val) => {
+            if (val.message) toastrError(val.message);
+            else {
+              setHistoric(transformHistoric(val));
+            }
+          })
+          .finally(() => setIsLoadingList(false));
+      }
     })();
-  }, []);
+  }, [currentUc]);
 
   const customTickFormatXAxis = (tickValue: number) => {
     return valueToNameMap[tickValue] || "";
@@ -68,13 +78,13 @@ export function DashboardGraphic() {
 
     // Encontrar o valor atual do mouse na escala de 0 a 800
     const xScale =
-      innerWidth > 1450
+      width > 1450
         ? 800 / dataList.length
-        : innerWidth > 1170
+        : width > 1170
         ? 550 / dataList.length
-        : innerWidth > 830
+        : width > 830
         ? 200 / dataList.length
-        : (innerWidth - 150) / dataList.length;
+        : (width - 150) / dataList.length;
 
     // Encontrar o valor mais próximo do mouse na lista de números fornecida
     let nearestIndex = 0;
@@ -151,13 +161,13 @@ export function DashboardGraphic() {
           margin={{ left: 80 }}
           height={450}
           width={
-            innerWidth > 1450
+            width > 1450
               ? 900
-              : innerWidth > 1170
+              : width > 1170
               ? 600
-              : innerWidth > 830
+              : width > 830
               ? 300
-              : innerWidth - 25
+              : width - 25
           }
         >
           {hint > -1 ? (

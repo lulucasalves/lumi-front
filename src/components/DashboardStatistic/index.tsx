@@ -47,6 +47,8 @@ export function DashboardStatistic() {
   const [data, setData] = useState<Mock>();
   const [hint, setHint] = useState(-1);
 
+  const width = typeof window !== "undefined" ? window.innerWidth : 900;
+
   useEffect(() => {
     (async () => {
       await ucData("7202788969")
@@ -81,13 +83,13 @@ export function DashboardStatistic() {
     const dataList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     const xScale =
-      innerWidth > 1450
+      width > 1450
         ? 800 / dataList.length
-        : innerWidth > 1170
+        : width > 1170
         ? 550 / dataList.length
-        : innerWidth > 830
+        : width > 830
         ? 200 / dataList.length
-        : (innerWidth - 150) / dataList.length;
+        : (width - 150) / dataList.length;
 
     let nearestIndex = 0;
     let minDistance = Math.abs(mouseX - dataList[0] * xScale);
@@ -258,13 +260,13 @@ export function DashboardStatistic() {
               margin={{ left: 80 }}
               height={450}
               width={
-                innerWidth > 1450
+                width > 1450
                   ? 900
-                  : innerWidth > 1170
+                  : width > 1170
                   ? 600
-                  : innerWidth > 830
+                  : width > 830
                   ? 300
-                  : innerWidth - 25
+                  : width - 25
               }
             >
               {hint > -1 && lines.length > 0 ? (

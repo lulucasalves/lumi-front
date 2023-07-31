@@ -1,11 +1,15 @@
 // contexts/MyContext.js
 import React, { ReactNode, createContext, useEffect, useState } from "react";
-import { getUcs } from "../client/boletos";
+import { getUcsAndYears } from "../client/boletos";
 import { toastrError } from "../features/toastr";
 
 const MyContext = createContext({});
 
 export interface IContext {
+  year: string;
+  setYear: (value: string) => void;
+  years: string[];
+  setYears: (value: string[]) => void;
   currentUc: string;
   setCurrentUc: (value: string) => void;
   ucs: string[];
@@ -14,17 +18,28 @@ export interface IContext {
 
 const MyContextProvider = ({ children }: { children: ReactNode }) => {
   const [currentUc, setCurrentUc] = useState("");
+  const [year, setYear] = useState("2023");
+  const [years, setYears] = useState(["2023"]);
   const [ucs, setUcs] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
-      await getUcs().then((res) => {
+      await getUcsAndYears().then((res) => {
         if (res.message) toastrError(res.message);
         else {
-          setUcs(res);
+          const getUcs = res.ucs;
+          const getYears = res.years;
 
-          if (res.length) {
-            setCurrentUc(res[0]);
+          setUcs(getUcs);
+
+          if (getUcs.length) {
+            setCurrentUc(getUcs[0]);
+          }
+
+          setYears(getYears);
+
+          if (getYears.length) {
+            setCurrentUc(getYears[0]);
           }
         }
       });
@@ -32,7 +47,18 @@ const MyContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <MyContext.Provider value={{ currentUc, setCurrentUc, ucs, setUcs }}>
+    <MyContext.Provider
+      value={{
+        currentUc,
+        setCurrentUc,
+        ucs,
+        setUcs,
+        year,
+        setYear,
+        years,
+        setYears,
+      }}
+    >
       {children}
     </MyContext.Provider>
   );
