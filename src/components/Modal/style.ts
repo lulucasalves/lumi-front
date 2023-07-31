@@ -39,6 +39,7 @@ export const ModalContent = styled.div`
   h2 {
     font-size: 2rem;
     font-weight: 500;
+    margin-right: 3rem;
   }
 
   div:last-child {

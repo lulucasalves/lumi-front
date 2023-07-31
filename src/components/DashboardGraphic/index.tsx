@@ -42,6 +42,8 @@ export function DashboardGraphic() {
     (async () => {
       if (currentUc) {
         const [, numberUc] = currentUc.split(" - ");
+
+        console.log(currentUc);
         setIsLoadingList(true);
         setIsLoadingGraph(true);
 

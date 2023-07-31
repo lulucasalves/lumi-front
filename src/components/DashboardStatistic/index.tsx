@@ -30,17 +30,20 @@ import {
   VerticalGridLines,
   Hint,
 } from "react-vis";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { theme } from "../../styles";
 import { ucData } from "../../client/boletos";
 import { toastrError } from "../../features/toastr";
 import { Loader } from "../index";
+import { IContext, MyContext } from "~/context/Boleto";
 
 export function DashboardStatistic() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [dropdown, setDropdown] = useState("Quantidade");
   const [lines, setLines] = useState(["total"]);
+  const { currentUc } = useContext<IContext>(MyContext);
+
   const handleDropdownToggle = () => {
     setDropdownOpen(!isDropdownOpen);
   };
@@ -51,7 +54,12 @@ export function DashboardStatistic() {
 
   useEffect(() => {
     (async () => {
-      await ucData("7202788969")
+      const [, numberUc] = currentUc.split(" - ");
+
+      console.log(currentUc);
+      setIsLoading(true);
+
+      await ucData(numberUc)
         .then((val) => {
           if (val.message) toastrError(val.message);
           else
@@ -66,7 +74,7 @@ export function DashboardStatistic() {
         })
         .finally(() => setIsLoading(false));
     })();
-  }, []);
+  }, [currentUc]);
 
   const customTickFormatXAxis = (tickValue: number) => {
     return valueToNameMap[tickValue] || "";

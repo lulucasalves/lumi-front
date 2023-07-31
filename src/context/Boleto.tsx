@@ -39,7 +39,7 @@ const MyContextProvider = ({ children }: { children: ReactNode }) => {
           setYears(getYears);
 
           if (getYears.length) {
-            setCurrentUc(getYears[0]);
+            setYear(getYears[0]);
           }
         }
       });

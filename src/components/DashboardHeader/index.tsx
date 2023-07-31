@@ -22,7 +22,7 @@ import { Loader } from "../Loader";
 import { toastrError } from "../../features/toastr";
 
 export function DashboardHeader() {
-  const { currentUc, ucs, setCurrentUc, year, setYear } =
+  const { currentUc, ucs, setCurrentUc, year, setYear, years } =
     useContext<IContext>(MyContext);
   const [last, setLast] = useState({ value: "", url: "" });
   const [modalUc, setModalUc] = useState(false);
@@ -85,10 +85,10 @@ export function DashboardHeader() {
         </div>
       </Modal>
       <Modal isOpen={modalYear} onClose={() => setModalYear(false)}>
-        <h2>Selecione o ano das faturas a serem requisitadas</h2>
+        <h2>Selecione o ano desejado</h2>
         <div>
-          {ucs
-            ? ucs.map((val, i) => {
+          {years
+            ? years.map((val, i) => {
                 return (
                   <div
                     onClick={() => {
