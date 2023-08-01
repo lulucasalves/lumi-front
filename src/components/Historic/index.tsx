@@ -97,6 +97,7 @@ export function Historic() {
       (async () => {
         await addPdf(formData)
           .then((val) => {
+            console.log(val);
             if (val.message) toastrError(val.message);
             else {
               toastrSuccess("Boleto enviado com sucesso!");
@@ -137,7 +138,7 @@ export function Historic() {
             onChange={handleFileChange}
           />
           <div>
-            {historic && historic.find((val) => val.total > 0) ? (
+            {historic && !isLoading && historic.find((val) => val.total > 0) ? (
               <table cellSpacing={0}>
                 <thead>
                   <tr>

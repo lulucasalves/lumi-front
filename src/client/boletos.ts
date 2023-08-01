@@ -52,5 +52,6 @@ export async function addPdf(files: FormData) {
     .then((response: AxiosResponse<unknown>) => response.data)
     .catch((error) => {
       console.log(error);
+      return error;
     });
 }

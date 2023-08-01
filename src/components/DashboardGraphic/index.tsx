@@ -39,7 +39,7 @@ export function DashboardGraphic() {
   const [hint, setHint] = useState(-1);
   const [historic, setHistoric] = useState([]);
 
-  useEffect(() => {
+  function getDataState() {
     (async () => {
       if (currentUc) {
         const [, numberUc] = currentUc.split(" - ");
@@ -64,6 +64,10 @@ export function DashboardGraphic() {
           .finally(() => setIsLoadingList(false));
       }
     })();
+  }
+
+  useEffect(() => {
+    getDataState();
   }, [currentUc, year]);
 
   const customTickFormatXAxis = (tickValue: number) => {
@@ -125,7 +129,11 @@ export function DashboardGraphic() {
         await addPdf(formData)
           .then((val) => {
             if (val.message) toastrError(val.message);
-            else toastrSuccess("Boleto enviado com sucesso!");
+            else {
+              getDataState();
+
+              toastrSuccess("Boleto enviado com sucesso!");
+            }
           })
           .finally(() => setIsSending(false));
       })();
@@ -141,7 +149,9 @@ export function DashboardGraphic() {
   }
 
   return !isLoadingGraph && !isLoadingList ? (
-    historic.find((val) => val.value > 0) ? (
+    historic.find((val) => val.value > 0) &&
+    !isLoadingGraph &&
+    !isLoadingList ? (
       <Container data-testid="dashboard-graphic">
         <Send>
           <Title>Suas faturas</Title>
