@@ -14,61 +14,20 @@ import {
 } from "./style";
 import { BsDownload, BsGraphUp, BsListCheck } from "react-icons/bs";
 import Router from "next/router";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import { IContext, MyContext } from "../../context/Boleto";
-import { ucList } from "../../client/boletos";
 import { Modal } from "../Modal";
 import { Loader } from "../Loader";
-import { toastrError } from "../../features/toastr";
 
-export function DashboardHeader() {
+export function DashboardHeader({
+  last,
+}: {
+  last: { value: string; url: string };
+}) {
   const { currentUc, ucs, setCurrentUc, year, setYear, years } =
     useContext<IContext>(MyContext);
-  const [last, setLast] = useState({ value: "", url: "" });
   const [modalUc, setModalUc] = useState(false);
   const [modalYear, setModalYear] = useState(false);
-
-  function ordenarPorDataEmissao(listaDeObjetos) {
-    const convertToDate = (dateStr) => {
-      const [day, month, year] = dateStr.split("/").map(Number);
-      return new Date(year, month - 1, day);
-    };
-
-    const sortedList = listaDeObjetos.sort((a, b) => {
-      const dateA = convertToDate(a.dataEmissao);
-      const dateB = convertToDate(b.dataEmissao);
-      return dateA - dateB;
-    });
-
-    return sortedList.reverse();
-  }
-  useMemo(() => {
-    (async () => {
-      if (currentUc) {
-        const [, numberUc] = currentUc.split(" - ");
-        setLast({ value: "", url: "" });
-        await ucList(numberUc, year).then((val) => {
-          if (val.message) toastrError(val.message);
-          else {
-            const value = ordenarPorDataEmissao(val)[0];
-            console.log(value);
-
-            if (value) {
-              setLast({
-                value: `R$ ${value.total.toFixed(2)}`,
-                url: value.url,
-              });
-            } else {
-              setLast({
-                value: `R$ 0,00`,
-                url: "value.url",
-              });
-            }
-          }
-        });
-      }
-    })();
-  }, [currentUc, year]);
 
   return (
     <Container data-testid="dashboard-header">
@@ -138,7 +97,7 @@ export function DashboardHeader() {
             <p>Análise suas despesas de uma forma eficiente</p>
           </Title>
           <LastChecked>
-            {last.value ? (
+            {last && last.value ? (
               <LastCheckedText>
                 <p>Sua última fatura</p>
                 <p>{last.value}</p>

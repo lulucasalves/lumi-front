@@ -21,10 +21,13 @@ import { Modal } from "../Modal";
 import { Loader } from "../Loader";
 import { toastrError } from "../../features/toastr";
 
-export function HistoricHeader() {
+export function HistoricHeader({
+  last,
+}: {
+  last: { value: string; url: string };
+}) {
   const { currentUc, ucs, setCurrentUc, year, setYear, years } =
     useContext<IContext>(MyContext);
-  const [last, setLast] = useState({ value: "", url: "" });
   const [modalUc, setModalUc] = useState(false);
   const [modalYear, setModalYear] = useState(false);
 
@@ -42,33 +45,6 @@ export function HistoricHeader() {
 
     return sortedList.reverse();
   }
-  useMemo(() => {
-    (async () => {
-      if (currentUc) {
-        const [, numberUc] = currentUc.split(" - ");
-        setLast({ value: "", url: "" });
-        await ucList(numberUc, year).then((val) => {
-          if (val.message) toastrError(val.message);
-          else {
-            const value = ordenarPorDataEmissao(val)[0];
-            console.log(value);
-
-            if (value) {
-              setLast({
-                value: `R$ ${value.total.toFixed(2)}`,
-                url: value.url,
-              });
-            } else {
-              setLast({
-                value: `R$ 0,00`,
-                url: "value.url",
-              });
-            }
-          }
-        });
-      }
-    })();
-  }, [currentUc, year]);
 
   return (
     <Container data-testid="historic-header">
@@ -138,7 +114,7 @@ export function HistoricHeader() {
             <p>Histórico de faturas</p>
           </Title>
           <LastChecked>
-            {last.value ? (
+            {last && last.value ? (
               <LastCheckedText>
                 <p>Sua última fatura</p>
                 <p>{last.value}</p>

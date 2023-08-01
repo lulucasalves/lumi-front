@@ -25,6 +25,7 @@ export function Historic() {
   const [isLoading, setIsLoading] = useState(false);
   const { currentUc, year } = useContext<IContext>(MyContext);
   const [isSending, setIsSending] = useState(false);
+  const [last, setLast] = useState({ value: "", url: "" });
 
   function realModel(value: number | string) {
     if (!value || value === "-") return "-";
@@ -64,6 +65,21 @@ export function Historic() {
     })();
   }
 
+  function ordenarPorDataEmissao(listaDeObjetos) {
+    const convertToDate = (dateStr) => {
+      const [day, month, year] = dateStr.split("/").map(Number);
+      return new Date(year, month - 1, day);
+    };
+
+    const sortedList = listaDeObjetos.sort((a, b) => {
+      const dateA = convertToDate(a.dataEmissao);
+      const dateB = convertToDate(b.dataEmissao);
+      return dateA - dateB;
+    });
+
+    return sortedList.reverse();
+  }
+
   useMemo(() => {
     if (currentUc) {
       setIsLoading(true);
@@ -73,7 +89,23 @@ export function Historic() {
         await ucList(numberUc, year)
           .then((val) => {
             if (val.message) toastrError(val.message);
-            else setHistoric(val);
+            else {
+              setHistoric(val);
+
+              const value = ordenarPorDataEmissao(val)[0];
+
+              if (value) {
+                setLast({
+                  value: `R$ ${value.total.toFixed(2)}`,
+                  url: value.url,
+                });
+              } else {
+                setLast({
+                  value: `R$ 0,00`,
+                  url: "value.url",
+                });
+              }
+            }
           })
           .finally(() => setIsLoading(false));
       })();
@@ -120,7 +152,7 @@ export function Historic() {
   };
   return (
     <Container data-testid="historic-page">
-      <HistoricHeader />
+      <HistoricHeader last={last} />
       {!isLoading ? (
         <Content>
           <Send>

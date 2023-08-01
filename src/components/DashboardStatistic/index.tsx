@@ -30,52 +30,27 @@ import {
   VerticalGridLines,
   Hint,
 } from "react-vis";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { theme } from "../../styles";
-import { ucData } from "../../client/boletos";
-import { toastrError } from "../../features/toastr";
 import { Loader } from "../index";
-import { IContext, MyContext } from "../../context/Boleto";
 
-export function DashboardStatistic() {
-  const [isLoading, setIsLoading] = useState(false);
+export function DashboardStatistic({
+  data,
+  isLoading,
+}: {
+  data: Mock;
+  isLoading: boolean;
+}) {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [dropdown, setDropdown] = useState("Quantidade");
   const [lines, setLines] = useState(["total"]);
-  const { currentUc, year } = useContext<IContext>(MyContext);
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!isDropdownOpen);
   };
-  const [data, setData] = useState<Mock>();
   const [hint, setHint] = useState(-1);
 
   const width = typeof window !== "undefined" ? window.innerWidth : 900;
-
-  useMemo(() => {
-    (async () => {
-      if (currentUc) {
-        const [, numberUc] = currentUc.split(" - ");
-
-        setIsLoading(true);
-
-        await ucData(numberUc, year)
-          .then((val) => {
-            if (val.message) toastrError(val.message);
-            else
-              setData({
-                total: val.Total,
-                energiaEletrica: val["Energia Elétrica"],
-                energiaInjetada: val["Energia Injetada"],
-                icms: val["ICMS"],
-                icmsSt: val["ICMS-ST"],
-                contribuicaoPublica: val["Contribuição"],
-              });
-          })
-          .finally(() => setIsLoading(false));
-      }
-    })();
-  }, [currentUc, year]);
 
   const customTickFormatXAxis = (tickValue: number) => {
     return valueToNameMap[tickValue] || "";

@@ -21,54 +21,28 @@ import {
   VerticalGridLines,
   Hint,
 } from "react-vis";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { theme } from "../../styles";
-import { addPdf, ucData, ucList } from "../../client/boletos";
-import { transformHistoric } from "../../features/historic";
+import { addPdf } from "../../client/boletos";
 import { Loader } from "../Loader";
 import { toastrError, toastrSuccess } from "../../features/toastr";
-import { IContext, MyContext } from "../../context/Boleto";
 
-export function DashboardGraphic() {
-  const [data, setData] = useState([]);
-  const { currentUc, year } = useContext<IContext>(MyContext);
-  const [isLoadingGraph, setIsLoadingGraph] = useState(false);
+export function DashboardGraphic({
+  historic,
+  isLoadingList,
+  isLoadingGraph,
+  data,
+  getDataState,
+}: {
+  historic: any[];
+  isLoadingList: boolean;
+  isLoadingGraph: boolean;
+  data: any[];
+  getDataState: () => void;
+}) {
   const [isSending, setIsSending] = useState(false);
-  const [isLoadingList, setIsLoadingList] = useState(false);
   const width = typeof window !== "undefined" ? window.innerWidth : 900;
   const [hint, setHint] = useState(-1);
-  const [historic, setHistoric] = useState([]);
-
-  function getDataState() {
-    (async () => {
-      if (currentUc) {
-        const [, numberUc] = currentUc.split(" - ");
-
-        setIsLoadingList(true);
-        setIsLoadingGraph(true);
-
-        await ucData(numberUc, year)
-          .then((val) => {
-            if (val.message) toastrError(val.message);
-            else setData(val.Total.Valor.sort((a, b) => a.x - b.x));
-          })
-          .finally(() => setIsLoadingGraph(false));
-
-        await ucList(numberUc, year)
-          .then((val) => {
-            if (val.message) toastrError(val.message);
-            else {
-              setHistoric(transformHistoric(val));
-            }
-          })
-          .finally(() => setIsLoadingList(false));
-      }
-    })();
-  }
-
-  useMemo(() => {
-    getDataState();
-  }, [currentUc, year]);
 
   const customTickFormatXAxis = (tickValue: number) => {
     return valueToNameMap[tickValue] || "";
@@ -148,7 +122,7 @@ export function DashboardGraphic() {
     }
   }
 
-  return !isLoadingGraph && !isLoadingList ? (
+  return !isLoadingGraph && !isLoadingList && historic ? (
     historic.find((val) => val.value > 0) &&
     !isLoadingGraph &&
     !isLoadingList ? (
