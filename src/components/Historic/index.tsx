@@ -9,7 +9,7 @@ import {
   Title,
 } from "./style";
 import { BsArrowRightCircle, BsDownload, BsTrash3 } from "react-icons/bs";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import {
   addPdf,
   changeStateData,
