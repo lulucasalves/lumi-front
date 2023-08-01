@@ -14,7 +14,7 @@ import {
 } from "./style";
 import { BsDownload, BsGraphUp, BsListCheck } from "react-icons/bs";
 import Router from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { IContext, MyContext } from "../../context/Boleto";
 import { ucList } from "../../client/boletos";
 import { Modal } from "../Modal";
@@ -42,7 +42,7 @@ export function DashboardHeader() {
 
     return sortedList.reverse();
   }
-  useEffect(() => {
+  useMemo(() => {
     (async () => {
       if (currentUc) {
         const [, numberUc] = currentUc.split(" - ");

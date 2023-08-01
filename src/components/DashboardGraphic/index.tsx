@@ -21,7 +21,7 @@ import {
   VerticalGridLines,
   Hint,
 } from "react-vis";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { theme } from "../../styles";
 import { addPdf, ucData, ucList } from "../../client/boletos";
 import { transformHistoric } from "../../features/historic";
@@ -66,7 +66,7 @@ export function DashboardGraphic() {
     })();
   }
 
-  useEffect(() => {
+  useMemo(() => {
     getDataState();
   }, [currentUc, year]);
 

@@ -1,5 +1,11 @@
 // contexts/MyContext.js
-import React, { ReactNode, createContext, useEffect, useState } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { getUcsAndYears } from "../client/boletos";
 import { toastrError } from "../features/toastr";
 
@@ -22,7 +28,7 @@ const MyContextProvider = ({ children }: { children: ReactNode }) => {
   const [years, setYears] = useState(["2023"]);
   const [ucs, setUcs] = useState<string[]>([]);
 
-  useEffect(() => {
+  useMemo(() => {
     (async () => {
       await getUcsAndYears().then((res) => {
         if (res.message) toastrError(res.message);

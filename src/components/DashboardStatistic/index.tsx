@@ -30,7 +30,7 @@ import {
   VerticalGridLines,
   Hint,
 } from "react-vis";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { theme } from "../../styles";
 import { ucData } from "../../client/boletos";
 import { toastrError } from "../../features/toastr";
@@ -52,7 +52,7 @@ export function DashboardStatistic() {
 
   const width = typeof window !== "undefined" ? window.innerWidth : 900;
 
-  useEffect(() => {
+  useMemo(() => {
     (async () => {
       if (currentUc) {
         const [, numberUc] = currentUc.split(" - ");

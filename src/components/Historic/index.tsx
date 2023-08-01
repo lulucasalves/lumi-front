@@ -9,7 +9,7 @@ import {
   Title,
 } from "./style";
 import { BsArrowRightCircle, BsDownload, BsTrash3 } from "react-icons/bs";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   addPdf,
   changeStateData,
@@ -64,7 +64,7 @@ export function Historic() {
     })();
   }
 
-  useEffect(() => {
+  useMemo(() => {
     if (currentUc) {
       setIsLoading(true);
       const [, numberUc] = currentUc.split(" - ");
