@@ -27,7 +27,7 @@ import { addPdf, ucData, ucList } from "../../client/boletos";
 import { transformHistoric } from "../../features/historic";
 import { Loader } from "../Loader";
 import { toastrError, toastrSuccess } from "../../features/toastr";
-import { IContext, MyContext } from "~/context/Boleto";
+import { IContext, MyContext } from "../../context/Boleto";
 
 export function DashboardGraphic() {
   const [data, setData] = useState([]);

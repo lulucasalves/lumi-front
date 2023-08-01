@@ -35,7 +35,7 @@ import { theme } from "../../styles";
 import { ucData } from "../../client/boletos";
 import { toastrError } from "../../features/toastr";
 import { Loader } from "../index";
-import { IContext, MyContext } from "~/context/Boleto";
+import { IContext, MyContext } from "../../context/Boleto";
 
 export function DashboardStatistic() {
   const [isLoading, setIsLoading] = useState(false);
@@ -54,24 +54,26 @@ export function DashboardStatistic() {
 
   useEffect(() => {
     (async () => {
-      const [, numberUc] = currentUc.split(" - ");
+      if (currentUc) {
+        const [, numberUc] = currentUc.split(" - ");
 
-      setIsLoading(true);
+        setIsLoading(true);
 
-      await ucData(numberUc, year)
-        .then((val) => {
-          if (val.message) toastrError(val.message);
-          else
-            setData({
-              total: val.Total,
-              energiaEletrica: val["Energia Elétrica"],
-              energiaInjetada: val["Energia Injetada"],
-              icms: val["ICMS"],
-              icmsSt: val["ICMS-ST"],
-              contribuicaoPublica: val["Contribuição"],
-            });
-        })
-        .finally(() => setIsLoading(false));
+        await ucData(numberUc, year)
+          .then((val) => {
+            if (val.message) toastrError(val.message);
+            else
+              setData({
+                total: val.Total,
+                energiaEletrica: val["Energia Elétrica"],
+                energiaInjetada: val["Energia Injetada"],
+                icms: val["ICMS"],
+                icmsSt: val["ICMS-ST"],
+                contribuicaoPublica: val["Contribuição"],
+              });
+          })
+          .finally(() => setIsLoading(false));
+      }
     })();
   }, [currentUc, year]);
 
@@ -458,9 +460,13 @@ export function DashboardStatistic() {
               </div>
             </List>
           </Statistics>
-        ) : null}
+        ) : (
+          <div data-testid="dashboard-statistics" />
+        )}
       </Container>
-    ) : null
+    ) : (
+      <div data-testid="dashboard-statistics" />
+    )
   ) : (
     <LoaderDiv data-testid="dashboard-statistics">
       <Loader size={100} />
