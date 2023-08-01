@@ -59,6 +59,7 @@ export function Historic() {
           else {
             toastrSuccess("Boleto deletado com sucesso!");
             setHistoric(res);
+            lastState();
           }
         })
         .finally(() => setIsLoading(false));
@@ -80,7 +81,7 @@ export function Historic() {
     return sortedList.reverse();
   }
 
-  useMemo(() => {
+  function lastState() {
     if (currentUc) {
       setIsLoading(true);
       const [, numberUc] = currentUc.split(" - ");
@@ -110,6 +111,10 @@ export function Historic() {
           .finally(() => setIsLoading(false));
       })();
     }
+  }
+
+  useMemo(() => {
+    lastState();
   }, [currentUc, year]);
 
   function handleUpload() {
@@ -134,6 +139,7 @@ export function Historic() {
             else {
               toastrSuccess("Boleto enviado com sucesso!");
               setHistoric(val);
+              lastState();
             }
           })
           .finally(() => {
