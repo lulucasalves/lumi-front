@@ -6,5 +6,5 @@ export const api = axios.create({
     "Accept-Language": "pt-BR",
   },
   baseURL: `https://lumi-back.onrender.com`,
-  timeout: 5000,
+  timeout: 90000,
 });
